@@ -1,4 +1,5 @@
-'''Cloud OS'''
+Cloud OS
+
 Author: Jesse Opitz
 Language: JavaScript
 
