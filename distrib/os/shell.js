@@ -59,7 +59,10 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellWhoAreYou, "whoareyou", "- Answers who I am.")
             this.commandList[this.commandList.length] = sc;
             // status <string>
-            sc = new TSOS.ShellCommand(this.shellStatus, "status", "- Set the status")
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Set the status")
+            this.commandList[this.commandList.length] = sc;
+            // panic
+            sc = new TSOS.ShellCommand(this.shellPanic, "panic", "- Triggers blue screen of death.")
             this.commandList[this.commandList.length] = sc;
             
             // ps  - list the running processes and their IDs
@@ -268,6 +271,7 @@ var TSOS;
         Shell.prototype.shellDate = function(args){
             // Outputs date to canvas
             _StdOut.putText(Date());
+            document.getElementById("date").innerHTML = "Date: " + Date()
             /*_StdOut.putText((date.getMonth() + 1) + '/'
                              + date.getDay() + '/'
                              + date.getYear() + ' '
@@ -283,18 +287,22 @@ var TSOS;
                 _StdOut.putText("Usage: status <string> Please input a string.")
             }
             else{
-                i = 0
-                status = ''
+                var i = 0;
+                var status = '';
                 // Allows multiple word status
                 while (i < (args.length)){
                     status = status + ' ' + args[i];
                     i = i + 1;
                 }
                 // Changes status on index.html page
-                _Status = status
-                document.getElementById("status").innerHTML = _Status
-                _StdOut.putText("Status is set to: " + _Status)
+                _Status = status;
+                document.getElementById("status").innerHTML = _Status;
+                _StdOut.putText("Status is set to: " + _Status);
             }
+        }
+        Shell.prototype.shellPanic = function(args){
+            // Triggers blue screen of death
+            _Kernel.krnTrapError()
         }
         return Shell;
     })();
