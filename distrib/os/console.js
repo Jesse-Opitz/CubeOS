@@ -21,7 +21,6 @@ var TSOS;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
-            this.commandHistory = commandHistory;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -34,12 +33,33 @@ var TSOS;
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
         };
+        // Handles backspace
+        Console.prototype.backspace = function(){
+            // Removes last character from the buffer
+            this.buffer = this.buffer.slice(0, (this.buffer.length - 1));
+            document.getElementById("console").innerHTML = this.buffer;
+            // Removes last character from canvas
+            
+            // Removes current line from canvas
+            _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, this.currentXPosition, this.currentFontSize + _FontHeightMargin);
+            
+            // Reset X position
+            this.currentXPosition = 0;
+            
+            // Rewrite to canvas
+            this.putText('>' + this.buffer);
+        };
+        
         Console.prototype.handleInput = function () {
             while (_KernelInputQueue.getSize() > 0) {
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
-                if (chr === String.fromCharCode(13)) {
+                if ( chr === String.fromCharCode(8)) {
+                    // Handle backspace
+                    this.backspace();
+                } 
+                else if (chr === String.fromCharCode(13)) {
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
@@ -101,6 +121,7 @@ var TSOS;
                 this.currentYPosition = _Canvas.height - this.currentFontSize - _FontHeightMargin;
             }
         };
+        
         return Console;
     })();
     TSOS.Console = Console;
