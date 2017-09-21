@@ -112,7 +112,7 @@ var TSOS;
                     if (this.buffer != '') {
                         this.commandHistory.push(this.buffer);
                         indexHistory = this.commandHistory.length;
-                        document.getElementById("history").innerHTML = this.buffer
+                        //document.getElementById("history").innerHTML = this.buffer
                         //document.getElementById("history").innerHTML = this.commandHistory + ' : ' + this.commandHistory.length;
                     }
                     // ... and reset our buffer.
@@ -159,7 +159,7 @@ var TSOS;
                     }
                     i++;
                 }
-                document.getElementById("console").innerHTML = viable.length;
+                //document.getElementById("console").innerHTML = viable.length;
                 
                 if (viable.length == 1){
                     this.clearLine()
@@ -171,7 +171,7 @@ var TSOS;
                     while (j < viable.length){
                         this.advanceLine()
                         this.putText('- ' + viable[j])
-                        document.getElementById("history").innerHTML = this.buffer
+                        //document.getElementById("history").innerHTML = this.buffer
                         j++;
                     }
                     this.advanceLine()
@@ -179,7 +179,7 @@ var TSOS;
                     this.putText('>' + this.buffer)
                 }
                 
-                document.getElementById("status").innerHTML = commands;
+                //document.getElementById("status").innerHTML = commands;
             }
         }
         Console.prototype.putText = function (text) {

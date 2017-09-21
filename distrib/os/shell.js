@@ -315,11 +315,15 @@ var TSOS;
             // Breakdown:
             // ^ Look for inverse
             // a-fA-F0-9 Verify it's hex
-            var pattern = new RegExp("^[a-f0-9 ]+$");
+            var pattern = new RegExp("^[a-fA-F0-9 ]+$");
             
             var isHex = pattern.test(userCode)
-            
-            _StdOut.putText("Invalid user input code. Must be between a-f, A-F, or 0-9. HEX CODE ONLY!")
+            if (isHex) {
+                _StdOut.putText("Program Loaded.")
+            }
+            else{
+                _StdOut.putText("Invalid user input code. Must be between a-f, A-F, or 0-9. HEX CODE ONLY!")
+            }
             
         }
         return Shell;
