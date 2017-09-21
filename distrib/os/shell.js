@@ -58,6 +58,10 @@ var TSOS;
             // whoareyou
             sc = new TSOS.ShellCommand(this.shellWhoAreYou, "whoareyou", "- Answers who I am.")
             this.commandList[this.commandList.length] = sc;
+            // status <string>
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "- Set the status")
+            this.commandList[this.commandList.length] = sc;
+            
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -262,7 +266,7 @@ var TSOS;
             _StdOut.putText("I am Yu and he is Mi.");
         };
         Shell.prototype.shellDate = function(args){
-            
+            // Outputs date to canvas
             _StdOut.putText(Date());
             /*_StdOut.putText((date.getMonth() + 1) + '/'
                              + date.getDay() + '/'
@@ -272,6 +276,26 @@ var TSOS;
                              + date.getSeconds() + ':'
                              + date.getMilliseconds());*/
         };
+        Shell.prototype.shellStatus = function(args){
+            // Outputs status to status message on page
+            // Checks if there are arguments to change status to
+            if (args.length < 1) {
+                _StdOut.putText("Usage: status <string> Please input a string.")
+            }
+            else{
+                i = 0
+                status = ''
+                // Allows multiple word status
+                while (i < (args.length)){
+                    status = status + ' ' + args[i];
+                    i = i + 1;
+                }
+                // Changes status on index.html page
+                _Status = status
+                document.getElementById("status").innerHTML = _Status
+                _StdOut.putText("Status is set to: " + _Status)
+            }
+        }
         return Shell;
     })();
     TSOS.Shell = Shell;
