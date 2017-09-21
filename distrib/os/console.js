@@ -10,7 +10,7 @@
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, commandHistory = []) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, indexHistory, commandHistory = []) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -21,6 +21,9 @@ var TSOS;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
+            this.indexHistory = indexHistory;
+            this.commandHistory = commandHistory;
+            
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -33,13 +36,8 @@ var TSOS;
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
         };
-        // Handles backspace
-        Console.prototype.backspace = function(){
-            // Removes last character from the buffer
-            this.buffer = this.buffer.slice(0, (this.buffer.length - 1));
-            document.getElementById("console").innerHTML = this.buffer;
-            // Removes last character from canvas
-            
+        // Clears line, creates a new one with desired message
+        Console.prototype.clearLine = function(newmsg) {
             // Removes current line from canvas
             _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, this.currentXPosition, this.currentFontSize + _FontHeightMargin);
             
@@ -47,7 +45,16 @@ var TSOS;
             this.currentXPosition = 0;
             
             // Rewrite to canvas
-            this.putText('>' + this.buffer);
+            this.putText('>' + newmsg);
+        };
+        
+        // Handles backspace
+        Console.prototype.backspace = function(){
+            // Removes last character from the buffer
+            this.buffer = this.buffer.substring(0, this.buffer.length-1);
+            
+            // Fixes canvas to new command
+            this.clearLine(this.buffer);
         };
         
         Console.prototype.handleInput = function () {
@@ -55,20 +62,66 @@ var TSOS;
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
+                console.log('here' + chr)
                 if ( chr === String.fromCharCode(8)) {
                     // Handle backspace
                     this.backspace();
                 } 
+                else if (chr === String.fromCharCode(38)) {
+                    // Handles up arrow
+                    if (this.commandHistory.length >= 1) {
+                        //document.getElementById("console").innerHTML = this.commandHistory[indexHistory - 1] + ' ' + indexHistory;
+                        // Fixes canvas to new command
+                        this.clearLine(this.commandHistory[indexHistory - 1])
+                        
+                        // Set buffer to new command
+                        this.buffer = this.commandHistory[indexHistory - 1]
+                        
+                        if (indexHistory > 1) {
+                            indexHistory = indexHistory - 1;
+                        }
+                    }
+                }
+                else if (chr === String.fromCharCode(40)) {
+                    
+                    if (indexHistory < this.commandHistory.length) {
+                        
+                        // Fixes canvas to new command
+                        this.clearLine(this.commandHistory[indexHistory - 1])
+                        
+                        // Set buffer to new command
+                        this.buffer = this.commandHistory[indexHistory - 1]
+                        
+                        if (indexHistory < this.commandHistory.length) {
+                            indexHistory = indexHistory + 1;
+                        }
+                    }
+                }
                 else if (chr === String.fromCharCode(13)) {
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
+                    if (this.buffer != '') {
+                        this.commandHistory.push(this.buffer);
+                        indexHistory = this.commandHistory.length;
+                        //document.getElementById("history").innerHTML = this.commandHistory + ' : ' + this.commandHistory.length;
+                    }
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
+                else if (chr == "55") {
+                    this.putText("&");
+                    this.buffer += "&";
+                }
+                else if (chr == "57"){
+                    this.putText("(");
+                    this.buffer += "(";
+                }
                 else {
+                    //document.getElementById("console").innerHTML = chr
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
+                    document.getElementById("status").innerHTML = chr;
                     this.putText(chr);
                     // ... and add it to our buffer.
                     this.buffer += chr;

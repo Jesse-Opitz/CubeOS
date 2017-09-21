@@ -40,23 +40,60 @@ var TSOS;
                 // Assume it's lowercase...
                 chr = String.fromCharCode(keyCode + 32);
                 // ... then check the shift key and re-adjust if necessary.
-                if (isShifted) {
+                if (isShifted == true) {
+                    
                     chr = String.fromCharCode(keyCode);
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (((keyCode >= 48) && (keyCode <= 57)) ||
-                (keyCode == 32) ||
+            else if ((keyCode >= 48) && (keyCode <= 57)) {
+                if (isShifted){
+                    if (keyCode === 48) {
+                        chr = ')';
+                    }
+                    else if (keyCode === 49){
+                        console.log('!');
+                        chr = '!';
+                    }
+                    else if (keyCode === 50){
+                        chr = '@';
+                    }
+                    else if (keyCode === 51){
+                        chr = '#';
+                    }
+                    else if (keyCode === 52){
+                        chr = '$';
+                    }
+                    else if (keyCode === 53){
+                        chr = '%';
+                    }
+                    else if (keyCode === 54){
+                        chr = '^';
+                    }
+                    else if (keyCode === 55){
+                        chr = '55'; // is &
+                    }
+                    else if (keyCode === 56){
+                        chr = '*';
+                    }
+                    else if (keyCode === 57){
+                        chr = '57' // is (
+                    }
+                }
+                console.log('CHR: ' + chr + ' ' + keyCode);
+                _KernelInputQueue.enqueue(chr);
+            }
+            else if ((keyCode == 32) ||
                 (keyCode == 13) || 
                 (keyCode == 8) ||
-                ((keyCode >= 33) && (keyCode <= 47)) ||
-                ((keyCode >= 58) && (keyCode <= 64)) ||
-                ((keyCode >= 91) && (keyCode <= 96)) ||
-                ((keyCode >=123) && (keyCode <= 126))){
+                (keyCode == 9) ||
+                (keyCode == 38) || 
+                (keyCode == 40)){
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             }
+            
         };
         return DeviceDriverKeyboard;
     })(TSOS.DeviceDriver);
