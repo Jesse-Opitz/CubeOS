@@ -10,7 +10,7 @@
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, commandHistory = []) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -21,6 +21,7 @@ var TSOS;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
+            this.commandHistory = commandHistory;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -82,6 +83,12 @@ var TSOS;
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             // TODO: Handle scrolling. (iProject 1)
+            // Checks if the position is going to be bigger than the canvas
+            var canvasBottom = 500;
+            if (this.currentYPosition > canvasBottom) {
+                document.getElementById("console").innerHTML = "Move Down";
+                
+            };
         };
         return Console;
     })();

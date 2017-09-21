@@ -320,7 +320,6 @@ var TSOS;
             var isHex = pattern.test(userCode)
             
             _StdOut.putText("Invalid user input code. Must be between a-f, A-F, or 0-9. HEX CODE ONLY!")
-            document.getElementById("code").innerHTML = userCode + ' ' + isHex;
             
         }
         return Shell;
