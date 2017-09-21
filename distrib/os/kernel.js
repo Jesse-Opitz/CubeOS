@@ -155,7 +155,7 @@ var TSOS;
         Kernel.prototype.krnTrapError = function (msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
-            _StdOut.putText("User initiated panic mode!!! Cube OS is shutting down...")
+            _StdOut.putText("Panic mode!! Cube OS is shutting down... Error: " + msg)
             document.getElementById("display").style.background = '#0943f2'
             this.krnShutdown();
         };

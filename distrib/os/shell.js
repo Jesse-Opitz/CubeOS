@@ -305,7 +305,7 @@ var TSOS;
         };
         Shell.prototype.shellPanic = function(args){
             // Triggers blue screen of death
-            _Kernel.krnTrapError()
+            _Kernel.krnTrapError('User initiated')
         };
         Shell.prototype.shellLoad = function(args){
             // Loads a user inputted program
