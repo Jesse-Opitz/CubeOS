@@ -113,9 +113,17 @@ var TSOS;
                     this.putText("&");
                     this.buffer += "&";
                 }
+                else if (chr == "5/5") {
+                    this.putText("7");
+                    this.buffer += "7";
+                }
                 else if (chr == "57"){
                     this.putText("(");
                     this.buffer += "(";
+                }
+                else if (chr == "5/7"){
+                    this.putText("9");
+                    this.buffer += "9";
                 }
                 else {
                     //document.getElementById("console").innerHTML = chr

@@ -53,7 +53,6 @@ var TSOS;
                         chr = ')';
                     }
                     else if (keyCode === 49){
-                        console.log('!');
                         chr = '!';
                     }
                     else if (keyCode === 50){
@@ -81,16 +80,84 @@ var TSOS;
                         chr = '57' // is (
                     }
                 }
-                console.log('CHR: ' + chr + ' ' + keyCode);
+                else{
+                    if (keyCode === 48) {
+                        chr = '0';
+                    }
+                    else if (keyCode === 49){
+                        chr = '1';
+                    }
+                    else if (keyCode === 50){
+                        chr = '2';
+                    }
+                    else if (keyCode === 51){
+                        chr = '3';
+                    }
+                    else if (keyCode === 52){
+                        chr = '4';
+                    }
+                    else if (keyCode === 53){
+                        chr = '5';
+                    }
+                    else if (keyCode === 54){
+                        chr = '6';
+                    }
+                    else if (keyCode === 55){
+                        chr = '5/5'; // is 7
+                    }
+                    else if (keyCode === 56){
+                        chr = '8';
+                    }
+                    else if (keyCode === 57){
+                        chr = '5/7' // is 9
+                    }
+                }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if ((keyCode == 32) ||
-                (keyCode == 13) || 
-                (keyCode == 8) ||
-                (keyCode == 9) ||
-                (keyCode == 38) || 
-                (keyCode == 40)){
+            else if ((keyCode == 32) || // Space
+                (keyCode == 13) ||  // Enter
+                (keyCode == 8) || // Backspace
+                (keyCode == 9) || // Tab
+                (keyCode == 38) || // Up key
+                (keyCode == 40)){ // Down key
                 chr = String.fromCharCode(keyCode);
+                _KernelInputQueue.enqueue(chr);
+            }
+            else {
+                if (keyCode === 186){
+                    chr = (isShifted) ? ":" : ";";
+                }
+                else if (keyCode === 187){
+                    chr = (isShifted) ? "+" : "=";
+                }
+                else if (keyCode === 188){
+                    chr = (isShifted) ? "<" : ",";
+                }
+                else if (keyCode === 189){
+                    chr = (isShifted) ? "_" : "-";
+                }
+                else if (keyCode === 190){
+                    chr = (isShifted) ? ">" : ".";
+                }
+                else if (keyCode === 191){
+                    chr = (isShifted) ? "?" : "/";
+                }
+                else if (keyCode === 192){
+                    chr = (isShifted) ? "~" : "`";
+                }
+                else if (keyCode === 219){
+                    chr = (isShifted) ? "{" : "[";
+                }
+                else if (keyCode === 220){
+                    chr = (isShifted) ? "|" : "\\";
+                }
+                else if (keyCode === 221){
+                    chr = (isShifted) ? "}" : "]";
+                }
+                else if (keyCode === 222){
+                    chr = (isShifted) ? "\"" : "'";
+                }
+                //console.log('CHR: ' + chr + ' ' + keyCode);
                 _KernelInputQueue.enqueue(chr);
             }
             
