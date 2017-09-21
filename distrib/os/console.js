@@ -84,11 +84,22 @@ var TSOS;
                 _FontHeightMargin;
             // TODO: Handle scrolling. (iProject 1)
             // Checks if the position is going to be bigger than the canvas
-            var canvasBottom = 500;
-            if (this.currentYPosition > canvasBottom) {
-                document.getElementById("console").innerHTML = "Move Down";
+            if (this.currentYPosition > _Canvas.height) {
+                //document.getElementById("console").innerHTML = "Move Down";
                 
-            };
+                // Screen shot canvas
+                // Using this.currentFontSize + _FontHeightMargin for sy takes out the top line
+                var  ssCanvas= _DrawingContext.getImageData(0, this.currentFontSize + _FontHeightMargin, _Canvas.width, _Canvas.height)
+                
+                // Clear Screen
+                this.clearScreen();
+                
+                // Paste screen shot back on canvas
+                _DrawingContext.putImageData(ssCanvas, 0, 0);
+                
+                // Reset the Y position to bottom of canvas and 
+                this.currentYPosition = _Canvas.height - this.currentFontSize - _FontHeightMargin;
+            }
         };
         return Console;
     })();
