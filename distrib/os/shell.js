@@ -64,7 +64,10 @@ var TSOS;
             // panic
             sc = new TSOS.ShellCommand(this.shellPanic, "panic", "- Triggers blue screen of death.")
             this.commandList[this.commandList.length] = sc;
-            
+            // load
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the user program input.")
+            this.commandList[this.commandList.length] = sc;
+                        
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -299,10 +302,26 @@ var TSOS;
                 document.getElementById("status").innerHTML = _Status;
                 _StdOut.putText("Status is set to: " + _Status);
             }
-        }
+        };
         Shell.prototype.shellPanic = function(args){
             // Triggers blue screen of death
             _Kernel.krnTrapError()
+        };
+        Shell.prototype.shellLoad = function(args){
+            // Loads a user inputted program
+            var userCode = document.getElementById("taProgramInput").value;
+            
+            // Regex pattern for hex code
+            // Breakdown:
+            // ^ Look for inverse
+            // a-fA-F0-9 Verify it's hex
+            var pattern = new RegExp("^[a-f0-9 ]+$");
+            
+            var isHex = pattern.test(userCode)
+            
+            _StdOut.putText("Invalid user input code. Must be between a-f, A-F, or 0-9. HEX CODE ONLY!")
+            document.getElementById("code").innerHTML = userCode + ' ' + isHex;
+            
         }
         return Shell;
     })();
