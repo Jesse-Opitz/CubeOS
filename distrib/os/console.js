@@ -37,7 +37,7 @@ var TSOS;
             this.currentYPosition = this.currentFontSize;
         };
         // Clears line, creates a new one with desired message
-        Console.prototype.clearLine = function(newmsg) {
+        Console.prototype.clearLine = function() {
             // Removes current line from canvas
             _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, this.currentXPosition, this.currentFontSize + _FontHeightMargin);
             
@@ -45,7 +45,7 @@ var TSOS;
             this.currentXPosition = 0;
             
             // Rewrite to canvas
-            this.putText('>' + newmsg);
+            //this.putText('>' + newmsg);
         };
         
         // Handles backspace
@@ -54,7 +54,9 @@ var TSOS;
             this.buffer = this.buffer.substring(0, this.buffer.length-1);
             
             // Fixes canvas to new command
-            this.clearLine(this.buffer);
+            this.clearLine();
+            
+            this.putText('>' + this.buffer);
         };
         
         Console.prototype.handleInput = function () {
@@ -62,17 +64,21 @@ var TSOS;
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
-                console.log('here' + chr)
                 if ( chr === String.fromCharCode(8)) {
                     // Handle backspace
                     this.backspace();
-                } 
+                }
+                else if (chr === String.fromCharCode(9)) {
+                    this.autocomplete();
+                }
                 else if (chr === String.fromCharCode(38)) {
                     // Handles up arrow
                     if (this.commandHistory.length >= 1) {
                         //document.getElementById("console").innerHTML = this.commandHistory[indexHistory - 1] + ' ' + indexHistory;
                         // Fixes canvas to new command
-                        this.clearLine(this.commandHistory[indexHistory - 1])
+                        this.clearLine()
+                        
+                        this.putText('>' + this.commandHistory[indexHistory - 1])
                         
                         // Set buffer to new command
                         this.buffer = this.commandHistory[indexHistory - 1]
@@ -87,7 +93,9 @@ var TSOS;
                     if (indexHistory < this.commandHistory.length) {
                         
                         // Fixes canvas to new command
-                        this.clearLine(this.commandHistory[indexHistory - 1])
+                        this.clearLine()
+                        
+                        this.putText('>' + this.commandHistory[indexHistory - 1])
                         
                         // Set buffer to new command
                         this.buffer = this.commandHistory[indexHistory - 1]
@@ -104,6 +112,7 @@ var TSOS;
                     if (this.buffer != '') {
                         this.commandHistory.push(this.buffer);
                         indexHistory = this.commandHistory.length;
+                        document.getElementById("history").innerHTML = this.buffer
                         //document.getElementById("history").innerHTML = this.commandHistory + ' : ' + this.commandHistory.length;
                     }
                     // ... and reset our buffer.
@@ -129,13 +138,50 @@ var TSOS;
                     //document.getElementById("console").innerHTML = chr
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
-                    document.getElementById("status").innerHTML = chr;
                     this.putText(chr);
                     // ... and add it to our buffer.
                     this.buffer += chr;
                 }
             }
         };
+        Console.prototype.autocomplete = function(text) {
+            if (this.buffer.length > 0) {
+                
+                var pattern = new RegExp("^" + this.buffer);
+                var commands = ['ver', 'help', 'shutdown', 'cls', 'man', 
+                                'trace', 'rot13', 'prompt', 'date', 'whereami', 
+                                'whoareyou', 'status', 'panic', 'load'];
+                var i = 0;
+                var viable = [];
+                while (i < commands.length) {
+                    if (pattern.test(commands[i])){
+                        viable.push(commands[i]);
+                    }
+                    i++;
+                }
+                document.getElementById("console").innerHTML = viable.length;
+                
+                if (viable.length == 1){
+                    this.clearLine()
+                    this.putText('>' + viable[0])
+                    this.buffer = viable[0]
+                }
+                else if (viable.length > 1){
+                    var j = 0;
+                    while (j < viable.length){
+                        this.advanceLine()
+                        this.putText('- ' + viable[j])
+                        document.getElementById("history").innerHTML = this.buffer
+                        j++;
+                    }
+                    this.advanceLine()
+                    this.clearLine()
+                    this.putText('>' + this.buffer)
+                }
+                
+                document.getElementById("status").innerHTML = commands;
+            }
+        }
         Console.prototype.putText = function (text) {
             // My first inclination here was to write two functions: putChar() and putString().
             // Then I remembered that JavaScript is (sadly) untyped and it won't differentiate
