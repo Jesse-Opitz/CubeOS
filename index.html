@@ -1,13 +1,16 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
    <meta name="author"             content="Alan G. Labouseur" />
    <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
    <title>
-      TSOS - a browser-based virtual Operating System in TypeScript
+      Cube OS - A browser operating system
    </title>
-
+   
+   <!-- Bootstrap -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+   
    <!-- Globals CONSTANTS and _Variables. Must included be first. -->
    <script type="text/javascript" src="distrib/globals.js"></script>
 
@@ -15,6 +18,8 @@
    <script type="text/javascript" src="distrib/host/control.js"></script>
    <script type="text/javascript" src="distrib/host/devices.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
+   <!-- NEEDS TO BE DONE >
+   <script type="text/javascript" src="distrib/host/memory.js"></script>-->
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -27,6 +32,9 @@
    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
+   <script type="text/javascript" src="distrib/os/PCB.js"></script>
+   <!-- NEEDS TO BE DONE>
+   <script type="text/javascript" src="distrib/os/memoryManager.js"></script>-->
 
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
@@ -39,15 +47,19 @@
    History: <span id="history"></span><br>
    Custom: <span id="console"></span>
 </div-->
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
 <div id="statusBar">
    Status: <span id="status"></span> <br>
    <span id="date"></span>
    <script>
-      document.getElementById("date").innerHTML = "Date: " + Date()
+      document.getElementById("date").innerHTML = "Date: " + Date();
    </script>
 </div>
-<div id="divMain" style="width:100%;">
 
+<div id="container" style="width:100%;">
    <div id="divButtonBar" style="margin:4px;">
       <input type="button"
              id = "btnStartOS"
@@ -77,7 +89,7 @@
       
    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
+   <div id="divConsole" style="margin:10px; width:500px; height:500px; float:left;">
       <canvas id="display"
               width="500px"
               height="500px"
@@ -85,28 +97,152 @@
       </canvas>
    </div>
 
-   <div id="divLog" style="margin-left:520px;">
+   <div id="divLog">
       <label>
          Host Log
          <br>
          <textarea name="taHostLog"
                    id  ="taHostLog"
-                   rows="26"
+                   rows="6"
                    cols="48"
          ></textarea>
       </label>
    </div>
 
-   <div id="divUserProgramInput" style="margin-left:520px;">
+   <div id="divUserProgramInput">
       <label>
          User Program Input
          <br>
          <textarea name="taProgramInput"
                    id  ="taProgramInput"
-                   rows="8"
+                   rows="6"
                    cols="48"
          ></textarea>
       </label>
+   </div>
+   <div id="divMemoryOutput">
+      <table class="table table-bordered table-responsive" style="width:500px;">
+         <thead>
+            <tr>
+               <th style="text-align:center;">
+                  Memory
+               </th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+               <td id="memory">
+                  
+               </td>
+            </tr>
+         </tbody>
+      </table>
+   </div>
+   <div id="divPCB">
+      <table class="table table-bordered table-responsive">
+         <thead>
+            <tr>
+               <th colspan="9" style="text-align:center;">
+                  PCB
+               </th>
+            </tr>
+            <tr>
+               <th>
+                  PID
+               </th>
+               <th>
+                  PC
+               </th>
+               <th>
+                  Acc
+               </th>
+               <th>
+                  X
+               </th>
+               <th>
+                  Y
+               </th>
+               <th>
+                  Z
+               </th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+               <td id="PID">
+                  --
+               </td>
+               <td id="PC">
+                  --
+               </td>
+               <td id="acc">
+                  --
+               </td>
+               <td id="X">
+                  --
+               </td>
+               <td id="Y">
+                  --
+               </td>
+               <td id="Z">
+                  --
+               </td>
+            </tr>
+         </tbody>
+      </table>
+   </div>
+   <div id="divCPU">
+      <table class="table table-bordered table-responsive">
+         <thead>
+            <tr>
+               <th colspan="9" style="text-align:center;">
+                  CPU
+               </th>
+            </tr>
+            <tr>
+               <th>
+                  PC
+               </th>
+               <th>
+                  IR
+               </th>
+               <th>
+                  Acc
+               </th>
+               <th>
+                  X
+               </th>
+               <th>
+                  Y
+               </th>
+               <th>
+                  ZF
+               </th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+               <td id="cpuPC">
+                  --
+               </td>
+               <td id="cpuIR">
+                  --
+               </td>
+               <td id="cpuAcc">
+                  --
+               </td>
+               <td id="cpuX">
+                  --
+               </td>
+               <td id="cpuY">
+                  --
+               </td>
+               <td id="cpuZ">
+                  --
+               </td>
+            </tr>
+         </tbody>
+      </table>
    </div>
 </div>
 
@@ -114,8 +250,7 @@
    <br>
    Copyright &copy; 2008 - 2016 No Rights Reserved.
    <br>
-   Reproduction is inhibited without the express written consent of
-   Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
+   Reproduction is inhibited without the express written consent outside of the cube!
 </p>
 
 </body>

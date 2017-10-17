@@ -67,7 +67,10 @@ var TSOS;
             // load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the user program input.")
             this.commandList[this.commandList.length] = sc;
-                        
+            // run
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Runs a program in memory.")
+            this.commandList[this.commandList.length] = sc;
+            
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -319,13 +322,24 @@ var TSOS;
             
             var isHex = pattern.test(userCode)
             if (isHex) {
+                _PCB = new TSOS.PCB(_PID);
+                console.log("Created new PCB: " + _PID);
+                _PCB.updatePCBTable();
                 _StdOut.putText("Program Loaded.")
+                _PID = _PID + 1;
             }
             else{
                 _StdOut.putText("Invalid user input code. Must be between a-f, A-F, or 0-9. HEX CODE ONLY!")
             }
             
-        }
+        };
+        Shell.prototype.shellRun = function(args){
+            // Runs the input pid
+            if (args.length < 1) {
+                _StdOut.putText("Usage: run <pid> Please input a pid.")
+            }
+            _StdOut.putText("Running " + args[0]);
+        };
         return Shell;
     })();
     TSOS.Shell = Shell;

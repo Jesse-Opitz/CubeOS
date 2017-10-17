@@ -1,4 +1,4 @@
-# Cloud OS
+# Cube OS
 ## Author 
 Jesse Opitz
 ## Language 

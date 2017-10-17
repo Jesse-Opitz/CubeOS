@@ -1,4 +1,4 @@
-///<reference path="../globals.ts" />
+///<reference path="../globals.js" />
 /* ------------
      CPU.ts
 
@@ -38,10 +38,21 @@ var TSOS;
             this.Zflag = 0;
             this.isExecuting = false;
         };
+        
+        Cpu.prototype.updateCPUTable = function () {
+            document.getElementById("cpuPC").innerHTML = this.PC;
+            document.getElementById("cpuAcc").innerHTML = this.Acc;
+            document.getElementById("cpuX").innerHTML = this.Xreg;
+            document.getElementById("cpuY").innerHTML = this.Yreg;
+            document.getElementById("cpuZ").innerHTML = this.Zflag;
+        };
+        
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            this.isExecuting = true;
+            
         };
         return Cpu;
     })();
