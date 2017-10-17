@@ -1,6 +1,6 @@
 ///<reference path="../globals.js" />
 /* ------------
-     CPU.js
+     memory.js
 
      Requires global.js.
 

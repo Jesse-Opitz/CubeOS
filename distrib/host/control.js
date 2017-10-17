@@ -78,7 +78,8 @@ var TSOS;
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
             _CPU.updateCPUTable(); // Updates CPU table after initializing
             // Create Memory manager
-            //_MemoryManager = new TSOS.MemoryManager();
+            _MemoryManager = new TSOS.MemoryManager();
+            
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.

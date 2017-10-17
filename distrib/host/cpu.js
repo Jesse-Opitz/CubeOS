@@ -16,14 +16,16 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting) {
+        function Cpu(PC, IR, Acc, Xreg, Yreg, Zflag, isExecuting) {
             if (PC === void 0) { PC = 0; }
+            if (IR === void 0) { IR = "00";}
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
             if (Yreg === void 0) { Yreg = 0; }
             if (Zflag === void 0) { Zflag = 0; }
             if (isExecuting === void 0) { isExecuting = false; }
             this.PC = PC;
+            this.IR = IR;
             this.Acc = Acc;
             this.Xreg = Xreg;
             this.Yreg = Yreg;
@@ -32,6 +34,7 @@ var TSOS;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
+            this.IR = "00";
             this.Acc = 0;
             this.Xreg = 0;
             this.Yreg = 0;
@@ -41,6 +44,7 @@ var TSOS;
         
         Cpu.prototype.updateCPUTable = function () {
             document.getElementById("cpuPC").innerHTML = this.PC;
+            document.getElementById("cpuIR").innerHTML = this.IR;
             document.getElementById("cpuAcc").innerHTML = this.Acc;
             document.getElementById("cpuX").innerHTML = this.Xreg;
             document.getElementById("cpuY").innerHTML = this.Yreg;
@@ -54,6 +58,7 @@ var TSOS;
             this.isExecuting = true;
             
         };
+
         return Cpu;
     })();
     TSOS.Cpu = Cpu;

@@ -8,8 +8,9 @@ var TSOS;
 (function (TSOS) {
     var PCB = (function () {
         // acc is accumulator
-        function PCB(PID, program_counter, acc, X, Y, Z) {
+        function PCB(PID, IR, program_counter, acc, X, Y, Z) {
             if (PID === void 0) {PID = -1;}
+            if (IR === void 0) {IR = "00"}
             if (program_counter === void 0) {program_counter = 0;}
             if (acc === void 0) {acc = 0;}
             if (X === void 0) {X = 0;}
@@ -17,6 +18,7 @@ var TSOS;
             if (Z === void 0) {Z = 0;}
             
             this.PID = PID;
+            this.IR = IR;
             this.program_counter = program_counter;
             this.acc = acc;
             this.X = X;
@@ -26,6 +28,7 @@ var TSOS;
         
         PCB.prototype.updatePCBTable = function () {
             document.getElementById("PID").innerHTML = this.PID;
+            document.getElementById("IR").innerHTML = this.IR;
             document.getElementById("PC").innerHTML = this.program_counter;
             document.getElementById("acc").innerHTML = this.acc;
             document.getElementById("X").innerHTML = this.X;

@@ -21,7 +21,7 @@ var KEYBOARD_IRQ = 1;
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
-var _Memory; // Instance of Memory class
+var _Memory; // Instance of Memory class for Main memory
 var _MemoryManager; // Instance of memory manager
 var _PCB; // Instance of a Process Control Block (PCB Class)
 var _PID = 0; // Current PCB ID

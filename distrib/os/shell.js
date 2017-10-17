@@ -312,7 +312,7 @@ var TSOS;
         };
         Shell.prototype.shellLoad = function(args){
             // Loads a user inputted program
-            var userCode = document.getElementById("taProgramInput").value;
+            var opCodes = document.getElementById("taProgramInput").value;
             
             // Regex pattern for hex code
             // Breakdown:
@@ -320,11 +320,13 @@ var TSOS;
             // a-fA-F0-9 Verify it's hex
             var pattern = new RegExp("^[a-fA-F0-9 ]+$");
             
-            var isHex = pattern.test(userCode)
+            var isHex = pattern.test(opCodes)
             if (isHex) {
                 _PCB = new TSOS.PCB(_PID);
                 console.log("Created new PCB: " + _PID);
                 _PCB.updatePCBTable();
+                //temp = new TSOS.MemoryManager();
+                _MemoryManager.write(opCodes);
                 _StdOut.putText("Program Loaded.")
                 _PID = _PID + 1;
             }
