@@ -318,7 +318,9 @@ var TSOS;
             // Breakdown:
             // ^ Look for inverse
             // a-fA-F0-9 Verify it's hex
-            var pattern = new RegExp("^[a-fA-F0-9 ]+$");
+            // Spaces and returns(\n) are acceptable
+            // |->Makes copy paste easier
+            var pattern = new RegExp("^[a-fA-F0-9 \n]+$");
             
             var isHex = pattern.test(opCodes)
             if (isHex) {
@@ -337,10 +339,12 @@ var TSOS;
         };
         Shell.prototype.shellRun = function(args){
             // Runs the input pid
+            // **For now it runs whatever programs in memory, not a specific PID
             if (args.length < 1) {
                 _StdOut.putText("Usage: run <pid> Please input a pid.")
             }
-            _StdOut.putText("Running " + args[0]);
+            _StdOut.putText("Running process:" + args[0]);
+            _CPU.cycle();
         };
         return Shell;
     })();

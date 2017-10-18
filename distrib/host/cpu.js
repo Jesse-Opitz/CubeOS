@@ -32,6 +32,8 @@ var TSOS;
             this.Zflag = Zflag;
             this.isExecuting = isExecuting;
         }
+        
+        // Initializes CPU
         Cpu.prototype.init = function () {
             this.PC = 0;
             this.IR = "00";
@@ -42,13 +44,14 @@ var TSOS;
             this.isExecuting = false;
         };
         
+        // Updates CPU table on index.html
         Cpu.prototype.updateCPUTable = function () {
-            document.getElementById("cpuPC").innerHTML = this.PC;
-            document.getElementById("cpuIR").innerHTML = this.IR;
-            document.getElementById("cpuAcc").innerHTML = this.Acc;
-            document.getElementById("cpuX").innerHTML = this.Xreg;
-            document.getElementById("cpuY").innerHTML = this.Yreg;
-            document.getElementById("cpuZ").innerHTML = this.Zflag;
+            document.getElementById("cpuPC").innerHTML = _PCB.program_counter;
+            document.getElementById("cpuIR").innerHTML = _PCB.IR;
+            document.getElementById("cpuAcc").innerHTML = _PCB.acc;
+            document.getElementById("cpuX").innerHTML = _PCB.Xreg;
+            document.getElementById("cpuY").innerHTML = _PCB.Yreg;
+            document.getElementById("cpuZ").innerHTML = _PCB.Zflag;
         };
         
         Cpu.prototype.cycle = function () {
@@ -57,6 +60,9 @@ var TSOS;
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             this.isExecuting = true;
             
+            
+            
+            _CPU.updateCPUTable();
         };
 
         return Cpu;
