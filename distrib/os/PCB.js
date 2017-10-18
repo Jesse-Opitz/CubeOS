@@ -24,7 +24,26 @@ var TSOS;
             this.X = X;
             this.Y = Y;
             this.Z = Z;
-        };
+            
+            /*
+              I use a stack to store PIDs.
+              This keeps track of which PIDs
+              are available to the user, according
+              to what's in Memory.
+              *We don't have storage other than 
+              *memory, so only one PID can be
+              *stored at a time.
+            */
+            // Pops last PID off stack
+            if (_PIDList.length >= _MaxProcesses){
+                _PIDList.pop();
+            }
+            // Pushes next PID onto the stack of 
+            // available PIDs
+            _PIDList.push(this.PID);
+            
+            console.log("Available PIDs: " + _PIDList);
+        }
         
         PCB.prototype.updatePCBTable = function () {
             document.getElementById("PID").innerHTML = this.PID;

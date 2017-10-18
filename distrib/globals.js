@@ -25,10 +25,12 @@ var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is 
 // Initializes memory instances
 var _Memory; // Instance of Memory class for Main memory
 var _MemoryManager; // Instance of memory manager
-// Initializes PCB instance
+
 var _PCB; // Instance of a Process Control Block (PCB Class)
 
 var _PID = 0; // Current PCB ID
+var _PIDList = [];
+var _MaxProcesses = 1;
 var _DefaultMemorySize = 255; // Sets system memory size
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.

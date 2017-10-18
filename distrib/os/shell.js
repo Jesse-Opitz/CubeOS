@@ -329,7 +329,7 @@ var TSOS;
                 _PCB.updatePCBTable();
                 //temp = new TSOS.MemoryManager();
                 _MemoryManager.write(opCodes);
-                _StdOut.putText("Program Loaded.")
+                _StdOut.putText("Program with PID " + _PID + " Loaded.")
                 _PID = _PID + 1;
             }
             else{
@@ -340,11 +340,24 @@ var TSOS;
         Shell.prototype.shellRun = function(args){
             // Runs the input pid
             // **For now it runs whatever programs in memory, not a specific PID
+            var found = false;
             if (args.length < 1) {
-                _StdOut.putText("Usage: run <pid> Please input a pid.")
+                _StdOut.putText("Usage: run <pid> Please input a pid.");
             }
-            _StdOut.putText("Running process:" + args[0]);
-            _CPU.cycle();
+            console.log('----' + args[0] + '-- PIDList: ' + _PIDList);
+            for (var i = 0; i < _PIDList.length; i++){
+                if (args[0] == _PIDList[i]){
+                    found = true;
+                    _StdOut.putText("Running process:" + args[0]);
+                    _CPU.cycle();
+                }
+            }
+            
+            if (found != true){
+                _StdOut.putText("Please enter a valid PID.")
+            }
+            
+            
         };
         return Shell;
     })();
