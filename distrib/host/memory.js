@@ -13,10 +13,10 @@ var TSOS;
         function Memory(bytes = Array(_DefaultMemorySize)) {
             this.bytes = bytes;
             // Set all bytes to 00 by default
-            var i = _DefaultMemorySize;
+            var i = _DefaultMemorySize - 1;
             while(i > 0){
                 if (this.bytes[i] == undefined){
-                    this.bytes[i] = 00;
+                    this.bytes[i] = "00";
                 }
                 i--;
             }

@@ -20,33 +20,32 @@ var TSOS;
         
         // Used when writing to memory
         MemoryManager.prototype.write = function (opCodes){
-            var limit = 256;
-            var opCodeIndex = 0;
-            var memStr = "";
-            for (var i = 0; i < limit; i++){
-                if (opCodes[opCodeIndex] === undefined){
-                    opCodes[opCodeIndex] = "00"
+            // Removes any spaces from opcodes
+            noSpaceOpCodes = opCodes.replace(/\s/g, '');
+            
+            // Seperates hex in memory so it is like 6502 op codes
+            for (var i = 0; i < noSpaceOpCodes.length; i++){
+                if (i === 1){
+                    _Memory.bytes[i-1] = noSpaceOpCodes[i-1] + '' + noSpaceOpCodes[i];
                 }
-                
-                _Memory.bytes[i] = opCodes[opCodeIndex];
-                
-                // This is for printing to screen purposes
-                //if (i % 2){
-                //    memStr += opCodes[opCodeIndex] + " ";
-                //}
-                //else {
-                //    memStr += opCodes[opCodeIndex];
-                //}
-                
-                opCodeIndex++;
+                else if (i%2){
+                    _Memory.bytes[i-2] = noSpaceOpCodes[i-1] + '' + noSpaceOpCodes[i];
+                }
             }
-            console.log(opCodes);
-            _MemoryManager.updateMemTable(opCodes);
+            //console.log(_Memory.bytes);
+            
+            _MemoryManager.updateMemTable(_Memory.bytes);
         };
         
         // Updates the memory table
-        MemoryManager.prototype.updateMemTable = function(opCodes){
-            document.getElementById("memory").innerHTML = opCodes;
+        MemoryManager.prototype.updateMemTable = function(memoryArr){
+            var prettyMem = '';
+            
+            for (var i = 0; i < memoryArr.length; i++){
+                console.log(memoryArr[i]);
+                prettyMem = prettyMem + ' ' + memoryArr[i];
+            }
+            document.getElementById("memory").innerHTML = prettyMem;
         };
         
         return MemoryManager;
