@@ -324,12 +324,20 @@ var TSOS;
             
             var isHex = pattern.test(opCodes)
             if (isHex) {
+                // Create a new PCB
                 _PCB = new TSOS.PCB(_PID);
                 console.log("Created new PCB: " + _PID);
+                
+                // Updates HTML PCB Table
                 _PCB.updatePCBTable();
-                //temp = new TSOS.MemoryManager();
+                
+                // Write opcodes to memory
                 _MemoryManager.write(opCodes);
+                
+                // Tell user the PID thats loaded
                 _StdOut.putText("Program with PID " + _PID + " Loaded.")
+                
+                // Increment PID
                 _PID = _PID + 1;
             }
             else{
@@ -344,7 +352,8 @@ var TSOS;
             if (args.length < 1) {
                 _StdOut.putText("Usage: run <pid> Please input a pid.");
             }
-            console.log('----' + args[0] + '-- PIDList: ' + _PIDList);
+            
+            // Check to see if its a valid PID
             for (var i = 0; i < _PIDList.length; i++){
                 if (args[0] == _PIDList[i]){
                     found = true;

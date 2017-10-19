@@ -84,27 +84,82 @@ var TSOS;
                         
                         break;
                     case 'AD':
+                        // **************************************
+                        // *     NOT DONE                       *
+                        // **************************************
                         // Load acc from memory
                         
                         // Skip the AD, we know what it is
                         _PCB.program_counter += 1;
                         
+                        var hexloc;
+                        var loc;
+                        
                         // Get hex location from memory
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
                         hexloc = _Memory.bytes[_PCB.program_counter];
                         
                         // Translate string hex to an int
-                        loc = 0;
+                        loc = parseInt(hexloc, 16);
                         
                         // Load accumulator from location
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
                         _PCB.acc = _Memory.bytes[loc];
+                        //console.log("ACC: " + _PCB.acc + " MEM: " + _Memory.bytes[loc]);
+                        
+                        // Increment pointer past location
+                        _PCB.program_counter += 2;
                         
                         break;
                     case '8D':
                         //Store acc in memory
+                        
+                        // Skip the 8D, whe know what it is
+                        _PCB.program_counter += 1;
+                        
+                        // Get memory location
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        
+                        // Translate string hex to an int
+                        loc = parseInt(hexloc, 16); 
+                        
+                        // Store accumulator in 
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                        _Memory.bytes[loc] = _PCB.acc;
+                        
+                        // Increment pointer past location
+                        _PCB.program_counter += 2;
+                        
                         break;
                     case '6D':
                         // Adds contents of address to acc,
                         // keeps result in acc
+                        
+                        // Stores accumulator at current state
+                        currAcc = _PCB.acc;
+                        
+                        // Skip the 6D, whe know what it is
+                        _PCB.program_counter += 1;
+                        
+                        // Get memory location
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        
+                        // Translate string hex to an int
+                        loc = parseInt(hexloc, 16); 
+                        
+                        // Gets the number at the location in memory
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                        locNum = _Memory.bytes[loc];
+                        
+                        // Adds number from memory to accumulator
+                        // Stores in current accumulator
+                        _PCB.acc = currAcc + locNum;
+                        
+                        // Increment pointer past location
+                        _PCB.program_counter += 2;
+                        
                         break;
                     case 'A2':
                         // Load X reg with constant
@@ -153,11 +208,13 @@ var TSOS;
                 }
                 //console.log(_PCB.program_counter);
                 //console.log(_Memory.bytes.length);
-                if (_PCB.program_counter >= _Memory.bytes.length){
+                if (_PCB.program_counter > _Memory.bytes.length){
                     isDone = true;
                     console.log('There is no break at the end. Should I bsod?')
                 }
             }
+            
+            _MemoryManager.updateMemTable(_Memory.bytes);
             _PCB.updatePCBTable();
             _CPU.updateCPUTable();
         };
