@@ -505,7 +505,7 @@ var TSOS;
                             
                             var terminated = false;
                             var inByte;
-                            var fullStr;
+                            var fullStr = '';
                             while(terminated === false){
                                 // Get current byte
                                 inByte = _Memory.bytes[loc];
@@ -514,15 +514,16 @@ var TSOS;
                                 if (inByte == '00'){
                                     terminated = true;
                                 }else{
+                                    document.getElementById("status").innerHTML = parseInt(inByte, 16);
                                     // Get the full string in characters
                                     var charCode = parseInt(inByte, 16);
-                                    
-                                    fullStr += String.fromCharCode(charCode);
+                                    _StdOut.putText(String.fromCharCode(charCode));
+                                    //fullStr += String.fromCharCode(charCode);
                                 }
                                 loc += 1;
                             }
                             
-                            _StdOut.putText(fullStr);
+                            //_StdOut.putText(fullStr);
                             _Console.advanceLine();
                         }
                         break;
