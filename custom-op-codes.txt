@@ -37,8 +37,8 @@ Acc = 03
 A0 09 A2 01 FF 
 Should print 09
 
-Below doesn't work, not sure why
-
+From somewhere, don't remember
+either labouseur.com or hall of fame
 A9 00 8D 7B 00 A9 00 8D 7B 
 00 A9 00 8D 7C 00 A9 00 8D 
 7C 00 A9 01 8D 7A 00 A2 00 
