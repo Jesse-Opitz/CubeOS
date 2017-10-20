@@ -421,7 +421,7 @@ var TSOS;
                             // Translate string hex to an int
                             n = parseInt(hexn, 16);
                             var newloc = parseInt(_PCB.program_counter) + n;
-                            document.getElementById("status").innerHTML = "From "+ _PCB.program_counter +"Jumping " + n + " to " + newloc;
+                            //document.getElementById("status").innerHTML = "From "+ _PCB.program_counter +"Jumping " + n + " to " + newloc;
                             if (newloc < 255){
                                 _PCB.program_counter = newloc + 1;
                             } else{
