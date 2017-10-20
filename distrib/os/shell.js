@@ -353,19 +353,29 @@ var TSOS;
                 _StdOut.putText("Usage: run <pid> Please input a pid.");
             }
             
-            // Check to see if its a valid PID
+            // See if PID is in Ready queue
             for (var i = 0; i < _PIDList.length; i++){
                 if (args[0] == _PIDList[i]){
                     found = true;
-                    _StdOut.putText("Running process:" + args[0]);
-                    _CPU.cycle();
                 }
             }
             
-            if (found != true){
-                _StdOut.putText("Please enter a valid PID.")
+            if (_CPU.isSingleStep === false){
+                if (found != true){
+                    _StdOut.putText("Please enter a valid PID.")
+                    
+                }else{
+                    _StdOut.putText("Running process:" + args[0]);
+                    _CPU.cycle();
+                }
+            }else{
+                if (found != true){
+                    _StdOut.putText("Please enter a valid PID.")
+                    
+                }else{
+                    _StdOut.putText("Running process:" + args[0]);
+                }
             }
-            
             
         };
         return Shell;

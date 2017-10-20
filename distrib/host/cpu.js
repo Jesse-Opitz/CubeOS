@@ -16,7 +16,7 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = (function () {
-        function Cpu(PC, IR, Acc, Xreg, Yreg, Zflag, isExecuting) {
+        function Cpu(PC, IR, Acc, Xreg, Yreg, Zflag, isExecuting, isSingleStep) {
             if (PC === void 0) { PC = 0; }
             if (IR === void 0) { IR = "00";}
             if (Acc === void 0) { Acc = 0; }
@@ -24,7 +24,7 @@ var TSOS;
             if (Yreg === void 0) { Yreg = 0; }
             if (Zflag === void 0) { Zflag = 0; }
             if (isExecuting === void 0) { isExecuting = false; }
-            //if (isSingleStep === void 0) { isSingleStep = false; }
+            if (isSingleStep === void 0) { isSingleStep = false; }
             this.PC = PC;
             this.IR = IR;
             this.Acc = Acc;
@@ -32,7 +32,7 @@ var TSOS;
             this.Yreg = Yreg;
             this.Zflag = Zflag;
             this.isExecuting = isExecuting;
-            //this.isSingleStep = isSingleStep;
+            this.isSingleStep = isSingleStep;
         }
         
         // Initializes CPU
@@ -44,6 +44,7 @@ var TSOS;
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
+            this.isSingleStep = false;
         };
         
         // Updates CPU table on index.html
@@ -60,7 +61,9 @@ var TSOS;
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            this.isExecuting = true;
+            if(this.isSingleStep === false){
+                this.isExecuting = true
+            }
             var isDone = false;
             
             // I got back to late, now I realize this is redundant

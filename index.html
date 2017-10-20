@@ -86,7 +86,22 @@
              value="Reset"
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
-      
+             
+      <input type="button"
+             id = "ssm"
+             name="singleStep"
+             disabled="disabled"
+             value="Single Step Mode: Off"
+             tabindex="2"
+             onclick="TSOS.Control.hostSSMBtn_click(this);">
+             
+      <input type="button"
+             id = "next"
+             name="next"
+             disabled="disabled"
+             value=">"
+             tabindex="2"
+             onclick="TSOS.Control.next(this)">
    </div>
 
    <div id="divConsole" style="margin:10px; width:500px; height:500px; float:left;">

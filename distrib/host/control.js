@@ -71,6 +71,7 @@ var TSOS;
             // .. enable the Halt and Reset buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
+            
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
             // Create Memory manager
@@ -78,6 +79,7 @@ var TSOS;
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            document.getElementById("ssm").disabled = false;
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -101,6 +103,21 @@ var TSOS;
             // page from its cache, which is not what we want.
         };
         
+        Control.hostSSMBtn_click = function (btn){
+            if (_CPU.isSingleStep === true){
+                document.getElementById("ssm").value = "Single Step Mode: Off"
+                _CPU.isSingleStep = false;
+            }
+            else{
+                document.getElementById("ssm").value = "Single Step Mode: On"
+                document.getElementById("next").disabled = false;
+                _CPU.isSingleStep = true;
+            }
+        }
+        
+        Control.next = function (btn){
+            _CPU.cycle();
+        }
         return Control;
     })();
     TSOS.Control = Control;
