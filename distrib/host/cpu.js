@@ -69,6 +69,8 @@ var TSOS;
                 this.isExecuting = false;
             }
             else {
+                // Update IR
+                _PCB.IR = _Memory.bytes[_PCB.program_counter];
                 // Switch to handle 6502 op codes
                 switch(_Memory.bytes[_PCB.program_counter].toUpperCase()){
                     // HEX ALPLHABET
@@ -142,13 +144,11 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > 255) || (loc < 0) || loc2 != '00'){
-                            document.getElementById("status").innerHTML = 'here';
-                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
                         }
                         else {
-                            document.getElementById("status").innerHTML = 'here: ' + loc;
                             // Store accumulator in 
                             // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
                             _Memory.bytes[loc] = _PCB.acc;
@@ -193,8 +193,8 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > 255) || (loc < 0) || loc2 != '00'){
-                            document.getElementById("status").innerHTML = 'here';
-                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            _StdOut.putText("Invalid memory access! Killing program.");
+                            _Console.advanceLine();
                             this.isExecuting = false;
                             this.isDone = true;
                         }
@@ -260,8 +260,7 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > 255) || (loc < 0) || loc2 != '00'){
-                            document.getElementById("status").innerHTML = 'here';
-                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
                         }
@@ -318,8 +317,7 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > 255) || (loc < 0) || loc2 != '00'){
-                            document.getElementById("status").innerHTML = 'here';
-                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
                         }
@@ -377,8 +375,7 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > 255) || (loc < 0) || loc2 != '00'){
-                            document.getElementById("status").innerHTML = 'here';
-                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
                         }
@@ -389,10 +386,13 @@ var TSOS;
                             
                             // Gets number in X register decimal value
                             xReg = parseInt(_PCB.X, 16);
-                            
+                            //_StdOut.putText("X: " + xReg + " locNum: " + locNum);
                             // Compare xReg to number in memory
                             if (xReg == locNum){
-                                _PCB.Z = 0;
+                                _PCB.Z = 0; // 0 if same
+                            } 
+                            else {
+                                _PCB.Z = 1;
                             }
                             
                             // Increment pointer past last location
@@ -416,13 +416,19 @@ var TSOS;
                             hexn = _Memory.bytes[_PCB.program_counter];
                         
                             // Translate string hex to an int
-                            n = parseInt(hexloc, 16);
+                            n = parseInt(hexn, 16);
+                            var newloc = parseInt(_PCB.program_counter) + n;
+                            document.getElementById("status").innerHTML = "From "+ _PCB.program_counter +"Jumping " + n + " to " + newloc;
+                            if (newloc < 255){
+                                _PCB.program_counter = newloc + 1;
+                            } else{
+                                _PCB.program_counter = newloc - 255;
+                            }
                             
-                            _PCB.program_counter += n;
+                        } else{
+                            _PCB.program_counter += 1;
                         }
                         
-                        // Skip n
-                        _PCB.program_counter += 1;
                         
                         break;
                     case 'EE':
@@ -452,8 +458,7 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > 255) || (loc < 0) || loc2 != '00'){
-                            document.getElementById("status").innerHTML = 'here';
-                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
                         }
@@ -482,8 +487,6 @@ var TSOS;
                         // |-> print the 00-terminated string 
                         // |-> stored at the address in the Y register.
                         
-                        var inStr;
-                        
                         // Skip FF
                         _PCB.program_counter += 1;
                         
@@ -494,14 +497,29 @@ var TSOS;
                         }
                         else if (_PCB.X == "02") {
                             // Print text until "00"
-                            while(_Memory.bytes[_PCB.program_counter] != "00"){
+                            var loc = parseInt(_PCB.Y, 16);
+                            
+                            var terminated = false;
+                            var inByte;
+                            var fullStr;
+                            while(terminated === false){
+                                // Get current byte
+                                inByte = _Memory.bytes[loc];
                                 
-                                inStr = _Memory.bytes[_PCB.program_counter]
-                                
-                                _StdOut.putText(inStr);
-                                
-                                _PCB.program_counter += 1;
+                                // 00 terminates string
+                                if (inByte == '00'){
+                                    terminated = true;
+                                }else{
+                                    // Get the full string in characters
+                                    var charCode = parseInt(inByte, 16);
+                                    
+                                    fullStr += String.fromCharCode(charCode);
+                                }
+                                loc += 1;
                             }
+                            
+                            _StdOut.putText(fullStr);
+                            _Console.advanceLine();
                         }
                         break;
                     default:
