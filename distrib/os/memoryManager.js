@@ -18,8 +18,15 @@ var TSOS;
             }
         }
         
-        // Used when writing to memory
+        // Used when writing to full segment of memory
         MemoryManager.prototype.write = function (opCodes){
+            
+            // Clear memory
+            // TODO: Proj 3 - Add base and limit
+            _Memory.clearMem();
+            
+            this.updateMemTable(opCodes);
+            
             // Removes any spaces from opcodes
             noSpaceOpCodes = opCodes.replace(/\s/g, '');
             var groupedCodes= '';
@@ -46,9 +53,9 @@ var TSOS;
             var prettyMem = '';
             
             for (var i = 0; i < memoryArr.length; i++){
-                //console.log(memoryArr[i]);
                 prettyMem = prettyMem + ' ' + memoryArr[i];
             }
+            
             document.getElementById("memory").innerHTML = prettyMem;
         };
         
@@ -65,9 +72,12 @@ var TSOS;
           |->This makes sense to me, may not be true. Please let me know
           |->if it is a correct practice or if I am doing it wrong.
         */
-        MemoryManager.prototype.editMem = function(location, byte) {
+        // THIS GOES IN MEMORY ACCESSOR, MEMORY.JS FOR THIS PROJECT
+        /*
+        MemoryManager.prototype.editMem = function(byte, location) {
             _Memory.bytes[location] = byte;
-        };
+            // TODO Update memory table in GUI here
+        };*/
         
         return MemoryManager;
     })();

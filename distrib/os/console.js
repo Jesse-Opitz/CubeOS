@@ -57,6 +57,7 @@ var TSOS;
             this.clearLine();
             
             this.putText('>' + this.buffer);
+            
         };
         
         Console.prototype.handleInput = function () {
@@ -192,6 +193,9 @@ var TSOS;
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
             if (text !== "") {
+                if (this.currentXPosition + this.currentFontSize >= _Canvas.width){
+                    this.advanceLine();
+                }
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.

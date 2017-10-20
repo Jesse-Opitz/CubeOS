@@ -63,13 +63,20 @@ var TSOS;
             this.isExecuting = true;
             var isDone = false;
             
+            // I got back to late, now I realize this is redundant
+            // TODO: Fix to run without isDone in Proj 3
             if (isDone) {
                 this.isExecuting = false;
             }
             else {
+                // Switch to handle 6502 op codes
                 switch(_Memory.bytes[_PCB.program_counter].toUpperCase()){
                     // HEX ALPLHABET
                     // 0 1 2 3 4 5 6 7 8 9 A B C D E F 10 11
+                    // Change should be in cpu not pcb
+                    // TODO: Change all _PCB changes to CPU changes
+                    // TODO: When reading a byte in memory change to a function in memory.js
+                    // TODO: When changing memory bytes, should be a function in memory.js
                     case 'A9':
                         // Load acc with constant
                         
@@ -84,9 +91,6 @@ var TSOS;
                         
                         break;
                     case 'AD':
-                        // **************************************
-                        // *     NOT DONE                       *
-                        // **************************************
                         // Load acc from memory
                         
                         // Skip the AD, we know what it is
@@ -114,6 +118,10 @@ var TSOS;
                     case '8D':
                         //Store acc in memory
                         
+                        var hexloc;
+                        var loc;
+                        var loc2;
+                        
                         // Skip the 8D, whe know what it is
                         _PCB.program_counter += 1;
                         
@@ -121,20 +129,46 @@ var TSOS;
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
                         hexloc = _Memory.bytes[_PCB.program_counter];
                         
-                        // Translate string hex to an int
+                        // Translate string hex to a decimal int
                         loc = parseInt(hexloc, 16); 
                         
-                        // Store accumulator in 
-                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        _Memory.bytes[loc] = _PCB.acc;
+                        // Increment pointer past first location to check for 00
+                        _PCB.program_counter += 1;
                         
-                        // Increment pointer past location
-                        _PCB.program_counter += 2;
+                        // Gets second location hex value
+                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        
+                        // TODO:Proj 3 - Change 255 to limit
+                        // Verify location is available to this program
+                        // loc2 can only be 00 for proj 2 b/c FF = 255
+                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                            document.getElementById("status").innerHTML = 'here';
+                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            this.isExecuting = false;
+                            this.isDone = true;
+                        }
+                        else {
+                            document.getElementById("status").innerHTML = 'here: ' + loc;
+                            // Store accumulator in 
+                            // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                            _Memory.bytes[loc] = _PCB.acc;
+                            
+                        }
+                        
+                        // Increment pointer past last part of location
+                        _PCB.program_counter += 1;
                         
                         break;
                     case '6D':
                         // Adds contents of address to acc,
                         // keeps result in acc
+                        
+                        var hexloc;
+                        var loc;
+                        var locNum;
+                        var currAcc;
+                        var added;
+                        var res;
                         
                         // Stores accumulator at current state
                         currAcc = _PCB.acc;
@@ -149,47 +183,295 @@ var TSOS;
                         // Translate string hex to an int
                         loc = parseInt(hexloc, 16); 
                         
-                        // Gets the number at the location in memory
-                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        locNum = _Memory.bytes[loc];
+                        // Increment pointer past first location to check for 00
+                        _PCB.program_counter += 1;
                         
-                        // Adds number from memory to accumulator
-                        // Stores in current accumulator
-                        _PCB.acc = currAcc + locNum;
+                        // Gets second location hex value
+                        loc2 = _Memory.bytes[_PCB.program_counter];
                         
-                        // Increment pointer past location
-                        _PCB.program_counter += 2;
+                        // TODO:Proj 3 - Change 255 to limit
+                        // Verify location is available to this program
+                        // loc2 can only be 00 for proj 2 b/c FF = 255
+                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                            document.getElementById("status").innerHTML = 'here';
+                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            this.isExecuting = false;
+                            this.isDone = true;
+                        }
+                        else {
+                            // Gets the number at the location in memory
+                            // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                            locNum = _Memory.bytes[loc];
+                            
+                            // Adds number from memory to accumulator
+                            added = parseInt(currAcc) + parseInt(locNum);
+                            
+                            if (added < 10){
+                                res = '0' + added;
+                            }else{
+                                res = added.toString(16);
+                            }
+                            
+                            // Stores in current accumulator
+                            _PCB.acc = res;
+                            
+                            // Increment pointer past last location
+                            _PCB.program_counter += 1;
+                        }
+                        
                         
                         break;
                     case 'A2':
                         // Load X reg with constant
+                        
+                        // Skip the A2, we know what it is
+                        _PCB.program_counter += 1;
+                        
+                        // Load X register with contant
+                        _PCB.X = _Memory.bytes[_PCB.program_counter];
+                        
+                        // Skip constant
+                        _PCB.program_counter += 1;
+                        
                         break;
                     case 'AE':
                         // Load X reg from memory
+                        var hexloc;
+                        var loc;
+                        var locNum;
+                        
+                        // Skip AE, we know what it is
+                        _PCB.program_counter += 1;
+                        
+                        // Get memory location
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        
+                        // Translate string hex to an int
+                        loc = parseInt(hexloc, 16); 
+                        
+                        // Increment pointer past first location to check for 00
+                        _PCB.program_counter += 1;
+                        
+                        // Gets second location hex value
+                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        
+                        // TODO:Proj 3 - Change 255 to limit
+                        // Verify location is available to this program
+                        // loc2 can only be 00 for proj 2 b/c FF = 255
+                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                            document.getElementById("status").innerHTML = 'here';
+                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            this.isExecuting = false;
+                            this.isDone = true;
+                        }
+                        else{
+                            // Gets the number at the location in memory
+                            // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                            locNum = _Memory.bytes[loc];
+                            
+                            // Load X reg
+                            _PCB.X = locNum
+                            
+                            // Increment pointer past last location
+                            _PCB.program_counter += 1;
+                        }
+                        
                         break;
                     case 'A0':
                         // Load Y reg with constant
+                        
+                        // Skip the A0, we know what it is
+                        _PCB.program_counter += 1;
+                        
+                        // Load Y reg with constant
+                        _PCB.Y = _Memory.bytes[_PCB.program_counter];
+                        
+                        // Skip constant
+                        _PCB.program_counter += 1;
+                        
                         break;
                     case 'AC':
                         // Load Y reg from memory
+                        
+                        var hexloc;
+                        var loc;
+                        var locNum;
+                        
+                        // Skip AE, we know what it is
+                        _PCB.program_counter += 1;
+                        
+                        // Get memory location
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        
+                        // Translate string hex to an int
+                        loc = parseInt(hexloc, 16); 
+                        
+                        // Increment pointer past first location to check for 00
+                        _PCB.program_counter += 1;
+                        
+                        // Gets second location hex value
+                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        
+                        // TODO:Proj 3 - Change 255 to limit
+                        // Verify location is available to this program
+                        // loc2 can only be 00 for proj 2 b/c FF = 255
+                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                            document.getElementById("status").innerHTML = 'here';
+                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            this.isExecuting = false;
+                            this.isDone = true;
+                        }
+                        else{
+                            // Gets the number at the location in memory
+                            // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                            locNum = _Memory.bytes[loc];
+                            
+                            // Load X reg
+                            _PCB.Y = locNum;
+                            
+                            // Increment pointer past last location
+                            _PCB.program_counter += 1;
+                        }
+                        
                         break;
                     case 'EA':
                         // No op
+                        
+                        // Just skip EA - there's no op on it
+                        _PCB.program_counter += 1;
+                        
                         break;
                     case '00':
                         // Break/system call
                         // Ends program
+                        _PCB.program_counter += 1;
                         this.isExecuting = false;
                         break;
                     case 'EC':
                         // Compare byte in memory to X reg,
                         // Sets Z flag to 0 if equal
+                        
+                        var loc;
+                        var locNum;
+                        var xReg;
+                        
+                        // Skip EC, we know what it is
+                        _PCB.program_counter += 1;
+                        
+                        // Get memory location
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        
+                        // Translate string hex to an int
+                        loc = parseInt(hexloc, 16); 
+                        
+                        // Increment pointer past first location to check for 00
+                        _PCB.program_counter += 1;
+                        
+                        // Gets second location hex value
+                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        
+                        // TODO:Proj 3 - Change 255 to limit
+                        // Verify location is available to this program
+                        // loc2 can only be 00 for proj 2 b/c FF = 255
+                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                            document.getElementById("status").innerHTML = 'here';
+                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            this.isExecuting = false;
+                            this.isDone = true;
+                        }
+                        else {
+                            // Gets the number at the location in memory
+                            // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                            locNum = _Memory.bytes[loc];
+                            
+                            // Gets number in X register decimal value
+                            xReg = parseInt(_PCB.X, 16);
+                            
+                            // Compare xReg to number in memory
+                            if (xReg == locNum){
+                                _PCB.Z = 0;
+                            }
+                            
+                            // Increment pointer past last location
+                            _PCB.program_counter += 1;
+                        }
+                        
                         break;
                     case 'D0':
                         // Branch n bytes if Z flag = 0
+                        
+                        var n;
+                        var hexn;
+                        
+                        // Skip D0, we know what it is
+                        _PCB.program_counter += 1;
+                        
+                        // Check Z flag and branch
+                        if (_PCB.Z == 0){
+                            // Get memory location
+                            // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                            hexn = _Memory.bytes[_PCB.program_counter];
+                        
+                            // Translate string hex to an int
+                            n = parseInt(hexloc, 16);
+                            
+                            _PCB.program_counter += n;
+                        }
+                        
+                        // Skip n
+                        _PCB.program_counter += 1;
+                        
                         break;
                     case 'EE':
                         // Increment the value of a byte
+                        
+                        var incNum;
+                        var loc;
+                        var locNum;
+                        
+                        // Skip EE
+                        _PCB.program_counter += 1;
+                        
+                        // Get memory location
+                        // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        
+                        // Translate string hex to an int
+                        loc = parseInt(hexloc, 16); 
+                        
+                        // Increment pointer past first location to check for 00
+                        _PCB.program_counter += 1;
+                        
+                        // Gets second location hex value
+                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        
+                        // TODO:Proj 3 - Change 255 to limit
+                        // Verify location is available to this program
+                        // loc2 can only be 00 for proj 2 b/c FF = 255
+                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                            document.getElementById("status").innerHTML = 'here';
+                            _StdOut.putText("Location out of programs memory! Killing program.");
+                            this.isExecuting = false;
+                            this.isDone = true;
+                        }
+                        else {
+                            // Gets the number at the location in memory
+                            // in decimal form
+                            // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
+                            locNum = parseInt(_Memory.bytes[loc], 16);
+                            
+                            // Increment value of byte
+                            incNum = locNum + 1;
+                            
+                            // Place number back in memory as a hex value
+                            _Memory.bytes[loc] = incNum.toString(16);
+                            
+                            // Skip location
+                            _PCB.program_counter += 1;
+                        }
                         break;
                     case 'FF':
                         // System call
@@ -199,18 +481,39 @@ var TSOS;
                         // Check X reg for 02
                         // |-> print the 00-terminated string 
                         // |-> stored at the address in the Y register.
+                        
+                        var inStr;
+                        
+                        // Skip FF
+                        _PCB.program_counter += 1;
+                        
+                        // Check X reg for 01
+                        if ( _PCB.X == "01") {
+                            // Print int stored in Y reg
+                            _StdOut.putText(_PCB.Y);
+                        }
+                        else if (_PCB.X == "02") {
+                            // Print text until "00"
+                            while(_Memory.bytes[_PCB.program_counter] != "00"){
+                                
+                                inStr = _Memory.bytes[_PCB.program_counter]
+                                
+                                _StdOut.putText(inStr);
+                                
+                                _PCB.program_counter += 1;
+                            }
+                        }
                         break;
                     default:
                         console.log('Not an op code:' + _Memory.bytes[_PCB.program_counter].toUpperCase())
-                        // Should I bsod here?
-                        console.log('This is not an op code or location. Should I bsod?')
+                        this.isExecuting = false;
+                        _StdOut.putText(_Memory.bytes[_PCB.program_counter] + " is not a valid 6502 op code. Execution killed");
                     
                 }
-                //console.log(_PCB.program_counter);
-                //console.log(_Memory.bytes.length);
                 if (_PCB.program_counter > _Memory.bytes.length){
                     isDone = true;
-                    console.log('There is no break at the end. Should I bsod?')
+                    this.isExecuting = false;
+                    _StdOut.putText("To many bytes in memory or no break at end of code. Execution killed.");
                 }
             }
             

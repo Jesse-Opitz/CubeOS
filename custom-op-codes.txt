@@ -1,1 +1,5 @@
-A9 01 8D 10 00 A9 02 AD 10 00
+A9 01 8D 18 00 A9 02 AD 18 00
+Should result in Acc = 01
+
+A9 01 8D 18 00 A9 02 AD 18 00 6D 18
+Should result in Acc = 02
