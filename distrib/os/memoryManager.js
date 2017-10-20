@@ -50,13 +50,41 @@ var TSOS;
         
         // Updates the memory table
         MemoryManager.prototype.updateMemTable = function(memoryArr){
-            var prettyMem = '';
+            /*var prettyMem = '';
             
             for (var i = 0; i < memoryArr.length; i++){
                 prettyMem = prettyMem + ' ' + memoryArr[i];
             }
             
-            document.getElementById("memory").innerHTML = prettyMem;
+            document.getElementById("memory").innerHTML = prettyMem;*/
+//            document.getElementById("divMemoryOutput");
+//            function generate_table() {
+            // get the reference for the body
+            var loc = 0;
+            
+            //var body = document.getElementById("divMemoryOutput");
+ 
+            // creates a <table> element and a <tbody> element
+            //var tbl = document.createElement("table");
+            //var tblBody = document.createElement("tbody");
+ 
+            // creating all cells
+            for (var i = 0; i < 32; i++) {
+            // creates a table row
+                //var row = document.createElement("tr");
+ 
+                for (var j = 0; j < 8; j++) {
+                    // Create a <td> element and a text node, make the text
+                    // node the contents of the <td>, and put the <td> at
+                    // the end of the table row
+                    var cell = document.getElementById("mem" + loc).innerHTML = _Memory.bytes[loc];
+                    //var cellText = document.createTextNode(_Memory.bytes[loc]);
+                    loc++;
+                    
+                }
+ 
+            }
+
         };
         
         // Used to edit specific parts of memory
