@@ -34,6 +34,11 @@ A9 01 8D FE 00 A9 02 AD FE 00 6D FE 00 A2 08 AE FE 00 A0 04 AC FE 00 EA EC FE 00
 A9 01 D0 02 A9 02 A9 03
 Acc = 03 
 
+A0 09 A2 01 FF 
+Should print 09
+
+Below doesn't work, not sure why
+
 A9 00 8D 7B 00 A9 00 8D 7B 
 00 A9 00 8D 7C 00 A9 00 8D 
 7C 00 A9 01 8D 7A 00 A2 00 

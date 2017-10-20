@@ -497,6 +497,7 @@ var TSOS;
                         if ( _PCB.X == "01") {
                             // Print int stored in Y reg
                             _StdOut.putText(_PCB.Y);
+                            _Console.advanceLine();
                         }
                         else if (_PCB.X == "02") {
                             // Print text until "00"
