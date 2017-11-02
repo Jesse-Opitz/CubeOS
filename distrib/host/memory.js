@@ -33,6 +33,7 @@ var TSOS;
         // but edited for my needs
         Memory.prototype.createTable = function(){
             var loc = 0;
+            var rowIndex = 0;
             
             var body = document.getElementById("divMemoryOutput");
  
@@ -49,11 +50,39 @@ var TSOS;
             //tblHead.appendChild(thRow);
             
             var tblBody = document.createElement("tbody");
- 
+            
+            var tblHead = document.createElement("thead");
+            var headRow = document.createElement("tr");
+            var head = document.createElement("th");
+            var headText = document.createTextNode("Memory");
+            
+            head.setAttribute("colspan","9");
+            head.setAttribute("style", "text-align:center;");
+            
+            head.appendChild(headText);
+            headRow.appendChild(head);
+            tblHead.appendChild(headRow);
+            tbl.appendChild(tblHead);
+            
             // creating all cells
             for (var i = 0; i < 32; i++) {
             // creates a table row
                 var row = document.createElement("tr");
+                var locCell = document.createElement("td");
+                if (rowIndex < 16){
+                    var locText = document.createTextNode("0x00" + rowIndex.toString(16).toUpperCase());
+                }
+                else if (rowIndex >= 256){
+                    var locText = document.createTextNode("0x" + rowIndex.toString(16).toUpperCase());
+                }
+                else{
+                    var locText = document.createTextNode("0x0" + rowIndex.toString(16).toUpperCase());
+                }
+                
+                
+                locCell.appendChild(locText);
+                row.appendChild(locCell);
+                rowIndex += 8;
                 for (var j = 0; j < 8; j++) {
                     // Create a <td> element and a text node, make the text
                     // node the contents of the <td>, and put the <td> at
