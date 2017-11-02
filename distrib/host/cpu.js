@@ -70,6 +70,9 @@ var TSOS;
             // TODO: Fix to run without isDone in Proj 3
             if (isDone) {
                 this.isExecuting = false;
+                _Console.advanceLine();
+                _StdOut.putText(">");
+                
             }
             else {
                 // Update IR
@@ -198,6 +201,7 @@ var TSOS;
                         if ((loc > 255) || (loc < 0) || loc2 != '00'){
                             _StdOut.putText("Invalid memory access! Killing program.");
                             _Console.advanceLine();
+                            _StdOut.putText(">");
                             this.isExecuting = false;
                             this.isDone = true;
                         }
@@ -392,10 +396,10 @@ var TSOS;
                             //_StdOut.putText("X: " + xReg + " locNum: " + locNum);
                             // Compare xReg to number in memory
                             if (xReg == locNum){
-                                _PCB.Z = 0; // 0 if same
+                                _PCB.Z = 1; // 0 if same
                             } 
                             else {
-                                _PCB.Z = 1;
+                                _PCB.Z = 0;
                             }
                             
                             // Increment pointer past last location
@@ -422,7 +426,7 @@ var TSOS;
                             n = parseInt(hexn, 16);
                             var newloc = parseInt(_PCB.program_counter) + n;
                             //document.getElementById("status").innerHTML = "From "+ _PCB.program_counter +"Jumping " + n + " to " + newloc;
-                            if (newloc < 255){
+                            if (newloc < 256){
                                 _PCB.program_counter = newloc + 1;
                             } else{
                                 _PCB.program_counter = newloc - 255;
@@ -524,19 +528,23 @@ var TSOS;
                             }
                             
                             //_StdOut.putText(fullStr);
-                            _Console.advanceLine();
+                            //_Console.advanceLine();
                         }
                         break;
                     default:
                         console.log('Not an op code:' + _Memory.bytes[_PCB.program_counter].toUpperCase())
                         this.isExecuting = false;
                         _StdOut.putText(_Memory.bytes[_PCB.program_counter] + " is not a valid 6502 op code. Execution killed");
+                        _Console.advanceLine();
+                        _StdOut.putText(">");
                     
                 }
                 if (_PCB.program_counter > _Memory.bytes.length){
                     isDone = true;
                     this.isExecuting = false;
                     _StdOut.putText("To many bytes in memory or no break at end of code. Execution killed.");
+                    _Console.advanceLine();
+                    _StdOut.putText(">");
                 }
             }
             
