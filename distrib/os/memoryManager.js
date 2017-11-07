@@ -20,10 +20,31 @@ var TSOS;
         
         // Used when writing to full segment of memory
         MemoryManager.prototype.write = function (opCodes){
+            // Keeps track of which segment is next
+            var segment = _segNumber % 3;
+            
+            // Segment 0 is the first 1/3 of memory
+            // Segment 1 is the second 1/3 of memory
+            // Segment 2 is the third 1/3 of memory
+            // Used to get base and limit
+            if (segment === 0){
+                var base = 0;
+                var limit = (_DefaultMemorySize/3) - 1;
+            }
+            else if (segment === 1){
+                var base = _DefaultMemorySize/3;
+                var limit = ((_DefaultMemorySize/3) * 2) - 1;
+            }
+            else if (segment === 2){
+                var base = ((_DefaultMemorySize/3) * 2);
+                var limit = _DefaultMemorySize - 1;
+            }
             
             // Clear memory
             // TODO: Proj 3 - Add base and limit
-            _Memory.clearMem();
+            _Memory.clearMem(base, limit);
+            
+            console.log("Writing to segment " + segment);
             
             this.updateMemTable(opCodes);
             
@@ -46,39 +67,22 @@ var TSOS;
             console.log('Length of bytes in main memory: ' + _Memory.bytes.length);
             
             _MemoryManager.updateMemTable(_Memory.bytes);
+            
+            _segNumber += 1;
         };
         
         // Updates the memory table
         MemoryManager.prototype.updateMemTable = function(memoryArr){
-            /*var prettyMem = '';
-            
-            for (var i = 0; i < memoryArr.length; i++){
-                prettyMem = prettyMem + ' ' + memoryArr[i];
-            }
-            
-            document.getElementById("memory").innerHTML = prettyMem;*/
-//            document.getElementById("divMemoryOutput");
-//            function generate_table() {
-            // get the reference for the body
             var loc = 0;
             
-            //var body = document.getElementById("divMemoryOutput");
- 
-            // creates a <table> element and a <tbody> element
-            //var tbl = document.createElement("table");
-            //var tblBody = document.createElement("tbody");
- 
             // creating all cells
-            for (var i = 0; i < 32; i++) {
+            for (var i = 0; i < (_DefaultMemorySize/8); i++) {
             // creates a table row
-                //var row = document.createElement("tr");
- 
                 for (var j = 0; j < 8; j++) {
                     // Create a <td> element and a text node, make the text
                     // node the contents of the <td>, and put the <td> at
                     // the end of the table row
                     var cell = document.getElementById("mem" + loc).innerHTML = _Memory.bytes[loc];
-                    //var cellText = document.createTextNode(_Memory.bytes[loc]);
                     loc++;
                     
                 }

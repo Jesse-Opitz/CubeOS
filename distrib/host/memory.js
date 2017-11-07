@@ -12,15 +12,15 @@ var TSOS;
     var Memory = (function () {
         function Memory(bytes = Array(_DefaultMemorySize)) {
             this.bytes = bytes;
-            this.clearMem();
+            this.clearMem(0,_DefaultMemorySize);
             this.createTable();
         }
         
         //TODO: Proj 3 - Add base and limit to clear a segment of memory
         // Set all bytes to 00 by default
-        Memory.prototype.clearMem = function (){
-            var i = _DefaultMemorySize - 1;
-            while(i >= 0){
+        Memory.prototype.clearMem = function (base, limit){
+            var i = limit - 1;
+            while(i >= base){
                 this.bytes[i] = "00";
                 i--;
             }
@@ -65,7 +65,7 @@ var TSOS;
             tbl.appendChild(tblHead);
             
             // creating all cells
-            for (var i = 0; i < 32; i++) {
+            for (var i = 0; i < (_DefaultMemorySize/8); i++) {
             // creates a table row
                 var row = document.createElement("tr");
                 var locCell = document.createElement("td");

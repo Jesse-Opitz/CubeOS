@@ -28,10 +28,12 @@ var _MemoryManager; // Instance of memory manager
 
 var _PCB; // Instance of a Process Control Block (PCB Class)
 
+var _segNumber = 0; // Number for which segment is next to put code in
+
 var _PID = 0; // Current PCB ID
 var _PIDList = [];
 var _MaxProcesses = 1;
-var _DefaultMemorySize = 256; // Sets system memory size
+var _DefaultMemorySize = 768; // Sets system memory size
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().
