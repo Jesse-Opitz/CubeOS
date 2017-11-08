@@ -8,7 +8,7 @@ var TSOS;
 (function (TSOS) {
     var PCB = (function () {
         // acc is accumulator
-        function PCB(PID, IR, program_counter, acc, X, Y, Z) {
+        function PCB(PID, IR, program_counter, acc, X, Y, Z, active) {
             if (PID === void 0) {PID = -1;}
             if (IR === void 0) {IR = "00"}
             if (program_counter === void 0) {program_counter = 0;}
@@ -16,14 +16,16 @@ var TSOS;
             if (X === void 0) {X = 0;}
             if (Y === void 0) {Y = 0;}
             if (Z === void 0) {Z = 0;}
+            if (active == void 0){active = 'Waiting';}
             
             this.PID = PID;
-            this.IR = I;Rt
+            this.IR = IR;
             this.program_counter = program_counter;
             this.acc = acc;
             this.X = X;
             this.Y = Y;
             this.Z = Z;
+            this.active = active;
             
             /*
               I use a stack to store PIDs.
@@ -43,6 +45,7 @@ var TSOS;
             _readyQueue.push(this.PID);
             
             console.log("Available PIDs: " + _readyQueue);
+            this.active = 'Ready'
         }
         
         PCB.prototype.updatePCBTable = function () {

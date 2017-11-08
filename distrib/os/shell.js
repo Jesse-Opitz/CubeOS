@@ -64,6 +64,9 @@ var TSOS;
             // panic
             sc = new TSOS.ShellCommand(this.shellPanic, "panic", "- Triggers blue screen of death.")
             this.commandList[this.commandList.length] = sc;
+            // ps
+            sc = new TSOS.ShellCommand(this.shellPs, "ps", "- Displays PIDs in ready queue.")
+            this.commandList[this.commandList.length] = sc;            
             // load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the user program input.")
             this.commandList[this.commandList.length] = sc;
@@ -399,6 +402,9 @@ var TSOS;
             else {  // Sets quantum
                 _quantum = args[0];
             }
+        }
+        Shell.prototype.shellPs = function (args){
+            _StdOut.putText('Ready PIDS: ' + _readyQueue);
         }
         return Shell;
     })();

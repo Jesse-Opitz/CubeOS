@@ -1,3 +1,4 @@
 clearmem
 load 3 programs
-set quantum
+set quantum + default = 6
+PS
