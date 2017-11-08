@@ -1,0 +1,3 @@
+clearmem
+load 3 programs
+set quantum

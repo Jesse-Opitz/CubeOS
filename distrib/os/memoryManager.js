@@ -21,7 +21,8 @@ var TSOS;
         // Used when writing to full segment of memory
         MemoryManager.prototype.write = function (opCodes){
             // Keeps track of which segment is next
-            var segment = _segNumber % 3;
+            //var segment = _segNumber % 3;
+            var segment = this.getMemSegment();
             
             // Segment 0 is the first 1/3 of memory
             // Segment 1 is the second 1/3 of memory
@@ -45,8 +46,8 @@ var TSOS;
             _Memory.clearMem(base, limit);
             
             console.log("Writing to segment " + segment);
-            
-            this.updateMemTable(opCodes);
+            console.log("Base is: " + base);
+            //this.updateMemTable(opCodes); - old call
             
             // Removes any spaces from opcodes
             noSpaceOpCodes = opCodes.replace(/\s/g, '');
@@ -59,14 +60,16 @@ var TSOS;
                 }
             }
             
-            for (var i = 0; i < groupedCodes.split(' ').length-1; i++){
-                _Memory.bytes[i] = groupedCodes.split(' ')[i];
+            for (var i = base; i < ((groupedCodes.split(' ').length-1) + base); i++){
+                // grouped codes needs i - base to start at 0
+                _Memory.bytes[i] = groupedCodes.split(' ')[i-base];
             }
             
             console.log('Bytes in main memory: ' + _Memory.bytes);
             console.log('Length of bytes in main memory: ' + _Memory.bytes.length);
             
-            _MemoryManager.updateMemTable(_Memory.bytes);
+            // _MemoryManager.updateMemTable(_Memory.bytes); - old call
+            this.updateMemTable(_Memory.bytes);
             
             _segNumber += 1;
         };
@@ -90,6 +93,11 @@ var TSOS;
             }
 
         };
+        
+        // returns current segment
+        MemoryManager.prototype.getMemSegment = function(){
+            return segment = _segNumber % 3;
+        }
         
         // Used to edit specific parts of memory
         // Mainly for storing the accumulator in memory, op code 8D

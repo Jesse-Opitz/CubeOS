@@ -70,6 +70,12 @@ var TSOS;
             // run
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Runs a program in memory.")
             this.commandList[this.commandList.length] = sc;
+            // clearmem
+            sc = new TSOS.ShellCommand(this.shellClearmem, "clearmem", "- Clears memory");
+            this.commandList[this.commandList.length] = sc;
+            // quantum <int>
+            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "- Sets quantum; Default is 6.");
+            this.commandList[this.commandList.length] = sc;
             
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -354,8 +360,8 @@ var TSOS;
             }
             
             // See if PID is in Ready queue
-            for (var i = 0; i < _PIDList.length; i++){
-                if (args[0] == _PIDList[i]){
+            for (var i = 0; i < _readyQueue.length; i++){
+                if (args[0] == _readyQueue[i]){
                     found = true;
                 }
             }
@@ -378,6 +384,22 @@ var TSOS;
             }
             
         };
+        Shell.prototype.shellClearmem = function (args){
+            // Clears memory
+            _Memory.clearMem(0, _DefaultMemorySize);
+            _MemoryManager.updateMemTable();
+            _readyQueue = [];
+        }
+        Shell.prototype.shellQuantum = function (args){
+            var intPatt = new RegExp("[0-9]+");
+            
+            if (args.length < 1 || !intPatt.test(args[0])) { // Make sure user entered a quantum thats an int
+                _StdOut.putText("Usage: quantum <int> Please input an int.")
+            }
+            else {  // Sets quantum
+                _quantum = args[0];
+            }
+        }
         return Shell;
     })();
     TSOS.Shell = Shell;

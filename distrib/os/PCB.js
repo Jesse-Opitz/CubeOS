@@ -18,7 +18,7 @@ var TSOS;
             if (Z === void 0) {Z = 0;}
             
             this.PID = PID;
-            this.IR = IR;
+            this.IR = I;Rt
             this.program_counter = program_counter;
             this.acc = acc;
             this.X = X;
@@ -35,14 +35,14 @@ var TSOS;
               *stored at a time.
             */
             // Pops last PID off stack
-            if (_PIDList.length >= _MaxProcesses){
-                _PIDList.pop();
+            if (_readyQueue.length >= _MaxProcesses){
+                _readyQueue.pop();
             }
             // Pushes next PID onto the stack of 
             // available PIDs
-            _PIDList.push(this.PID);
+            _readyQueue.push(this.PID);
             
-            console.log("Available PIDs: " + _PIDList);
+            console.log("Available PIDs: " + _readyQueue);
         }
         
         PCB.prototype.updatePCBTable = function () {
