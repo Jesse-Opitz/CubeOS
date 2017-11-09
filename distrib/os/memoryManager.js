@@ -25,7 +25,7 @@ var TSOS;
             var segment = this.getMemSegment();
             
             // Gets tuple of base and limit
-            var baseLimit = this.getBaseLimit();
+            var baseLimit = this.getBaseLimit(segment);
             
             var base = baseLimit[0];
             var limit = baseLimit[1];
@@ -89,10 +89,7 @@ var TSOS;
         };
         
         // returns tuple of base and limit
-        MemoryManager.prototype.getBaseLimit = function(){
-            //var segment = _segNumber % 3;
-            var segment = this.getMemSegment();
-            
+        MemoryManager.prototype.getBaseLimit = function(segment){
             // Segment 0 is the first 1/3 of memory
             // Segment 1 is the second 1/3 of memory
             // Segment 2 is the third 1/3 of memory

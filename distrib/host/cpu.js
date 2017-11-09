@@ -77,6 +77,14 @@ var TSOS;
             else {
                 // Update IR
                 _PCB.IR = _Memory.bytes[_PCB.program_counter];
+                
+                var baseLimit = _MemoryManager.getBaseLimit(_readyQueue.indexOf(_PCB.PID));
+                
+                console.log("HERE BASELIMIT: " + baseLimit);
+                var base = baseLimit[0];
+                var limit = baseLimit[1];
+                
+                console.log("HERE: " + base + " " + limit);
                 // Switch to handle 6502 op codes
                 switch(_Memory.bytes[_PCB.program_counter].toUpperCase()){
                     // HEX ALPLHABET
@@ -85,6 +93,8 @@ var TSOS;
                     // TODO: Change all _PCB changes to CPU changes
                     // TODO: When reading a byte in memory change to a function in memory.js
                     // TODO: When changing memory bytes, should be a function in memory.js
+                    
+                    
                     case 'A9':
                         // Load acc with constant
                         
@@ -92,7 +102,7 @@ var TSOS;
                         _PCB.program_counter += 1;
                         
                         // Load acc with constant
-                        _PCB.acc = _Memory.bytes[_PCB.program_counter];
+                        _PCB.acc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Pass constant
                         _PCB.program_counter += 1;
@@ -109,7 +119,7 @@ var TSOS;
                         
                         // Get hex location from memory
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
                         loc = parseInt(hexloc, 16);
@@ -135,7 +145,7 @@ var TSOS;
                         
                         // Get memory location
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to a decimal int
                         loc = parseInt(hexloc, 16); 
@@ -144,12 +154,12 @@ var TSOS;
                         _PCB.program_counter += 1;
                         
                         // Gets second location hex value
-                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        loc2 = _Memory.bytes[_PCB.program_counter + base];
                         
                         // TODO:Proj 3 - Change 255 to limit
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
-                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                        if ((loc > limit) || (loc < base) || loc2 != '00'){
                             _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
@@ -184,7 +194,7 @@ var TSOS;
                         
                         // Get memory location
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
                         loc = parseInt(hexloc, 16); 
@@ -193,10 +203,8 @@ var TSOS;
                         _PCB.program_counter += 1;
                         
                         // Gets second location hex value
-                        loc2 = _Memory.bytes[_PCB.program_counter];
-                        var baseLimit = _MemoryManager.getBaseLimit();
-                        var base = baseLimit[0];
-                        var limit = baseLimit[1];
+                        loc2 = _Memory.bytes[_PCB.program_counter + base];
+                        
                         // TODO:Proj 3 - Change 255 to limit
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
@@ -237,7 +245,7 @@ var TSOS;
                         _PCB.program_counter += 1;
                         
                         // Load X register with contant
-                        _PCB.X = _Memory.bytes[_PCB.program_counter];
+                        _PCB.X = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Skip constant
                         _PCB.program_counter += 1;
@@ -254,7 +262,7 @@ var TSOS;
                         
                         // Get memory location
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
                         loc = parseInt(hexloc, 16); 
@@ -263,12 +271,12 @@ var TSOS;
                         _PCB.program_counter += 1;
                         
                         // Gets second location hex value
-                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        loc2 = _Memory.bytes[_PCB.program_counter + base];
                         
                         // TODO:Proj 3 - Change 255 to limit
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
-                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                        if ((loc > limit) || (loc < base) || loc2 != '00'){
                             _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
@@ -293,7 +301,7 @@ var TSOS;
                         _PCB.program_counter += 1;
                         
                         // Load Y reg with constant
-                        _PCB.Y = _Memory.bytes[_PCB.program_counter];
+                        _PCB.Y = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Skip constant
                         _PCB.program_counter += 1;
@@ -311,7 +319,7 @@ var TSOS;
                         
                         // Get memory location
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
                         loc = parseInt(hexloc, 16); 
@@ -320,12 +328,12 @@ var TSOS;
                         _PCB.program_counter += 1;
                         
                         // Gets second location hex value
-                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        loc2 = _Memory.bytes[_PCB.program_counter + base];
                         
                         // TODO:Proj 3 - Change 255 to limit
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
-                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                        if ((loc > limit) || (loc < base) || loc2 != '00'){
                             _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
@@ -369,7 +377,7 @@ var TSOS;
                         
                         // Get memory location
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
                         loc = parseInt(hexloc, 16); 
@@ -378,12 +386,12 @@ var TSOS;
                         _PCB.program_counter += 1;
                         
                         // Gets second location hex value
-                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        loc2 = _Memory.bytes[_PCB.program_counter + base];
                         
                         // TODO:Proj 3 - Change 255 to limit
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
-                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                        if ((loc > limit) || (loc < base) || loc2 != '00'){
                             _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
@@ -422,11 +430,11 @@ var TSOS;
                         if (_PCB.Z == 0){
                             // Get memory location
                             // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                            hexn = _Memory.bytes[_PCB.program_counter];
+                            hexn = _Memory.bytes[_PCB.program_counter + base];
                         
                             // Translate string hex to an int
                             n = parseInt(hexn, 16);
-                            var newloc = parseInt(_PCB.program_counter) + n;
+                            var newloc = parseInt((_PCB.program_counter + base)) + n;
                             //document.getElementById("status").innerHTML = "From "+ _PCB.program_counter +"Jumping " + n + " to " + newloc;
                             if (newloc < 256){
                                 _PCB.program_counter = newloc + 1;
@@ -452,7 +460,7 @@ var TSOS;
                         
                         // Get memory location
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        hexloc = _Memory.bytes[_PCB.program_counter];
+                        hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
                         loc = parseInt(hexloc, 16); 
@@ -461,12 +469,12 @@ var TSOS;
                         _PCB.program_counter += 1;
                         
                         // Gets second location hex value
-                        loc2 = _Memory.bytes[_PCB.program_counter];
+                        loc2 = _Memory.bytes[_PCB.program_counter + base];
                         
                         // TODO:Proj 3 - Change 255 to limit
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
-                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                        if ((loc > limit) || (loc < base) || loc2 != '00'){
                             _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
@@ -534,14 +542,14 @@ var TSOS;
                         }
                         break;
                     default:
-                        console.log('Not an op code:' + _Memory.bytes[_PCB.program_counter].toUpperCase())
+                        console.log('Not an op code:' + _Memory.bytes[_PCB.program_counter + base].toUpperCase())
                         this.isExecuting = false;
-                        _StdOut.putText(_Memory.bytes[_PCB.program_counter] + " is not a valid 6502 op code. Execution killed");
+                        _StdOut.putText(_Memory.bytes[_PCB.program_counter + base] + " is not a valid 6502 op code. Execution killed");
                         _Console.advanceLine();
                         _StdOut.putText(">");
                     
                 }
-                if (_PCB.program_counter > _Memory.bytes.length){
+                if ((_PCB.program_counter + base) > _Memory.bytes.length){
                     isDone = true;
                     this.isExecuting = false;
                     _StdOut.putText("To many bytes in memory or no break at end of code. Execution killed.");

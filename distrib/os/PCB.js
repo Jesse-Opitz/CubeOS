@@ -52,7 +52,6 @@ var TSOS;
             // Validation for segment being full is in
             // the shell load function in shell.js
             _readyQueue[_MemoryManager.getMemSegment()] = this.PID;
-            _residentQueue[_MemoryManager.getMemSegment()] = _PCB;
             
             console.log("Available PIDs: " + _readyQueue);
             this.active = 'Ready';

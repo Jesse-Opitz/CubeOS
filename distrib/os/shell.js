@@ -338,6 +338,7 @@ var TSOS;
                     // Create a new PCB
                     _PCB = new TSOS.PCB(_PID);
                     console.log("Created new PCB: " + _PID);
+                    _residentQueue[_MemoryManager.getMemSegment()] = _PCB;
                     
                     // Updates HTML PCB Table
                     _PCB.updatePCBTable();
@@ -364,6 +365,8 @@ var TSOS;
             
         };
         Shell.prototype.shellRun = function(args){
+            // TODO: Check the indexOf the PCB on run, run that segment
+            
             // Runs the input pid
             // **For now it runs whatever programs in memory, not a specific PID
             var found = false;
@@ -386,17 +389,26 @@ var TSOS;
                     _StdOut.putText("Please enter a valid PID.")
                     
                 }else{
-                    _StdOut.putText("Running process:" + args[0]);
+                    _StdOut.putText("Running process: " + args[0]);
+                    
+                    // Segment of memory
+                    var tempSegNum = _readyQueue.indexOf(activePID);
+                    console.log(_residentQueue[tempSegNum]);
+                    _PCB = _residentQueue[tempSegNum];
+                    _PCB.updatePCBTable();
+                    
+                    /*
+                    * Older code
                     // Load the correct PCB
-                    //console.log('Here: ' + _residentQueue[1].PID)
                     for (var i = 1; i < _residentQueue.length; i++){
                         //console.log("Resident Queue: " + _residentQueue[i]);
-                        if (_residentQueue[i].PID === activePID){
+                        if (_residentQueue[i].PID == activePID){
                             _PCB = _residentQueue[i]
                             _PCB.updatePCBTable();
                             break;
                         }
-                    }
+                    }*/
+                    console.log("CYCLE")
                     _CPU.cycle();
                 }
             }else{
