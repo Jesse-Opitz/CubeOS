@@ -339,13 +339,23 @@ var TSOS;
             
             var isHex = pattern.test(opCodes);
             if (isHex) {
-                //if (_readyQueue.length < _MaxProcesses){
-                if (_readyQueue[_MemoryManager.getMemSegment()] == -1){
+                console.log(_readyQueue + " Ready queue");
+                if (_readyQueue.getSize() < _MaxProcesses){
                     // Create a new PCB
                     _PCB = new TSOS.PCB(_PID);
-                    console.log("Created new PCB: " + _PID);
-                    console.log("Resident Queue updated: " + _residentQueue);
-                    _residentQueue[_MemoryManager.getMemSegment()] = _PCB;
+                    
+                    // Add PCB to ready and resident queue
+                    _readyQueue.enqueue(_PCB.PID);
+                    _residentQueue.enqueue(_PCB);
+                    
+                    _segNumber++;
+                    
+                    _PCB.active = 'Ready';
+                    
+                    console.log("Created new PCB: " + _PCB);
+                    console.log("Available PIDs: " + _readyQueue.toString());
+                    console.log("Resident Queue updated: " + _residentQueue.toString());
+                    console.log("Ready Queue: " + _readyQueue.toString());
                     
                     // Updates HTML PCB Table
                     _PCB.updatePCBTable();
@@ -359,7 +369,6 @@ var TSOS;
                     // Increment PID
                     _PID = _PID + 1;
                     
-                    console.log("Ready Queue: " + _readyQueue);
                     _MemoryManager.updateResQTable();
                 }
                 else {
@@ -379,17 +388,11 @@ var TSOS;
             }
             
             // See if PID is in Ready queue
-            for (var i = 0; i < _readyQueue.length; i++){
-                if (args[0] == _readyQueue[i]){
+            for (var i = 0; i < _readyQueue.getSize(); i++){
+                if (args[0] == _readyQueue.q[i]){
                     found = true;
                     // Store the running PID
                     var activePID = i;
-                    //console.log("Args --: " + args[0]);
-                    //console.log("Ready queue item: " + _readyQueue[i]);
-                    //console.log("Active PID--: " + activePID);
-                    //console.log("Index: " + _readyQueue.indexOf(activePID));
-                    //var tempSegNum = _readyQueue.indexOf(activePID);
-                    //console.log("Object: " + _residentQueue[activePID]);
                 }
             }
             
@@ -399,19 +402,26 @@ var TSOS;
                     
                 }else{
                     _StdOut.putText("Running process: " + args[0]);
+                    var resQIndex = -1;
+                    for (var i = 0; i < _residentQueue.getSize(); i++){
+                        if (_residentQueue.q[i].PID == activePID){
+                            resQIndex = i;
+                            break;
+                        }
+                    }
                     
                     // Segment of memory
-                    //var tempSegNum = _readyQueue.indexOf(activePID);
-                    // console.log("PCB in use: " + _residentQueue[activePID]);
-                    // console.log("Active PID: " + _residentQueue[activePID]); //tempSegNum);
-                    _PCB = _residentQueue[activePID]; //[tempSegNum];
+                    _PCB = _residentQueue.q[resQIndex];
                     _PCB.updatePCBTable();
                     
                     _CPU.cycle();
                     
+                    console.log('Proccess ' + activePID + ' finished.');
+                    _CPU.isExecuting = false;
+                       
                     // TODO: After a program finishes, erase it from the ready queue 
                     // OR Reset program counter back to 0
-                    // TODO: Implement context switches??????
+                    _readyQueue.q.splice(_readyQueue.q.indexOf(_PCB.PID), 1);
                 }
             }else{
                 if (found != true){
@@ -426,11 +436,8 @@ var TSOS;
         //TODO: Make this work... How do you run shellRun inside shell?
         Shell.prototype.shellRunall = function(args){
             // Runs all processes in ready queue
-            for (var i = 0; i < _readyQueue.length; i++){
-                if (i != -1){
-                    Shell.shellRun(i);
-                }
-            }
+            _CPU.cycle()
+            
         };
         //TODO: Make this work... What do I do here?
         Shell.prototype.shellKill = function(args){
@@ -441,10 +448,8 @@ var TSOS;
             // Clears memory
             _Memory.clearMem(0, _DefaultMemorySize);
             _MemoryManager.updateMemTable();
-            for (var i = 0; i < _readyQueue.length; i++){
-                _readyQueue[i] = -1;
-                _residentQueue[i] = -1;
-            }
+            _readyQueue.q = [];
+            _residentQueue.q = [];
             _segNumber = 0;
             _MemoryManager.updateResQTable();
 
@@ -456,11 +461,11 @@ var TSOS;
                 _StdOut.putText("Usage: quantum <int> Please input an int.")
             }
             else {  // Sets quantum
-                _quantum = args[0];
+                _scheduler.quantum = args[0];
             }
         };
         Shell.prototype.shellPs = function (args){
-            _StdOut.putText('Ready PIDS: ' + _readyQueue);
+            _StdOut.putText('Ready PIDS: ' + _readyQueue.toString());
         };
         return Shell;
     })();

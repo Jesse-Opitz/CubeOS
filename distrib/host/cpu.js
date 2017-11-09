@@ -59,20 +59,22 @@ var TSOS;
         
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
+            _PCB.active = 'Executing';
+            _progCounter++;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if(this.isSingleStep === false){
-                this.isExecuting = true
+                this.isExecuting = true;
             }
             var isDone = false;
             
             // I got back to late, now I realize this is redundant
             // TODO: Fix to run without isDone in Proj 3
             if (isDone) {
-                this.isExecuting = false;
+                //this.isExecuting = false;
+                
                 _Console.advanceLine();
                 _StdOut.putText(">");
-                
             }
             else {
                 // Get PCB's current base limit
@@ -164,8 +166,9 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > limit) || (loc < base) || loc2 != '00'){
-                            _StdOut.putText("Invalid memory access! Killing program.");
-                            this.isExecuting = false;
+                            _StdOut.putText("Invalid memory access, You can not leave your cube! Killing program.");
+                            //this.isExecuting = false;
+                            
                             this.isDone = true;
                             _StdOut.advanceLine();
                             _StdOut.putText(">");
@@ -215,10 +218,11 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > limit) || (loc < base) || loc2 != '00'){
-                            _StdOut.putText("Invalid memory access! Killing program.");
+                            _StdOut.putText("Invalid memory access, You can not leave your cube! Killing program.");
                             _Console.advanceLine();
                             _StdOut.putText(">");
-                            this.isExecuting = false;
+                            //this.isExecuting = false;
+                            
                             this.isDone = true;
                         }
                         else {
@@ -283,8 +287,9 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > limit) || (loc < base) || loc2 != '00'){
-                            _StdOut.putText("Invalid memory access! Killing program.");
-                            this.isExecuting = false;
+                            _StdOut.putText("Invalid memory access, You can not leave your cube! Killing program.");
+                            //this.isExecuting = false;
+                            
                             this.isDone = true;
                             _StdOut.advanceLine();
                             _StdOut.putText(">");
@@ -342,8 +347,9 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > limit) || (loc < base) || loc2 != '00'){
-                            _StdOut.putText("Invalid memory access! Killing program.");
-                            this.isExecuting = false;
+                            _StdOut.putText("Invalid memory access, You can not leave your cube! Killing program.");
+                            //this.isExecuting = false;
+                            return 'done'
                             this.isDone = true;
                             _StdOut.advanceLine();
                             _StdOut.putText(">");
@@ -372,7 +378,9 @@ var TSOS;
                         // Break/system call
                         // Ends program
                         _PCB.program_counter += 1;
-                        this.isExecuting = false;
+                        console.log("found break");
+                        //console.log("IR: " + _PCB.IR);
+                        //this.isExecuting = false;
                         break;
                     case 'EC':
                         // Compare byte in memory to X reg,
@@ -402,8 +410,9 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > limit) || (loc < base) || loc2 != '00'){
-                            _StdOut.putText("Invalid memory access! Killing program.");
-                            this.isExecuting = false;
+                            _StdOut.putText("Invalid memory access, You can not leave your cube! Killing program.");
+                            //this.isExecuting = false;
+                            
                             this.isDone = true;
                             _StdOut.advanceLine();
                             _StdOut.putText(">");
@@ -487,9 +496,10 @@ var TSOS;
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > limit) || (loc < base) || loc2 != '00'){
-                            _StdOut.putText("Invalid memory access! Killing program.");
+                            _StdOut.putText("Invalid memory access, You can not leave your cube! Killing program.");
                             _StdOut.putText(">");
-                            this.isExecuting = false;
+                            //this.isExecuting = false;
+                            
                             this.isDone = true;
                             _StdOut.advanceLine();
                         }
@@ -553,8 +563,9 @@ var TSOS;
                                 }
                             }
                             else{
-                                _StdOut.putText("Invalid memory access! Killing program.");
-                                this.isExecuting = false;
+                                _StdOut.putText("Invalid memory access, You can not leave your cube! Killing program.");
+                                //this.isExecuting = false;
+                                
                                 this.isDone = true;
                                 _StdOut.advanceLine();
                                 _StdOut.putText(">");
@@ -566,24 +577,26 @@ var TSOS;
                         break;
                     default:
                         console.log('Not an op code:' + _Memory.bytes[_PCB.program_counter + base].toUpperCase())
-                        this.isExecuting = false;
-                        _StdOut.putText(_Memory.bytes[_PCB.program_counter + base] + " is not a valid 6502 op code. Execution killed");
+                        //this.isExecuting = false;
+                        
+                        _StdOut.putText(_Memory.bytes[_PCB.program_counter + base] + " is not a valid 6502 op code, don't try to break your cube. Execution killed");
                         _Console.advanceLine();
                         _StdOut.putText(">");
                     
                 }
                 if ((_PCB.program_counter + base) > _Memory.bytes.length){
                     isDone = true;
-                    this.isExecuting = false;
-                    _StdOut.putText("To many bytes in memory or no break at end of code. Execution killed.");
+                    //this.isExecuting = false;
+                    
+                    _StdOut.putText("To many bytes in memory or no break at end of code. You can not leave your cube! Execution killed.");
                     _Console.advanceLine();
                     _StdOut.putText(">");
                 }
             }
-            
             _MemoryManager.updateMemTable(_Memory.bytes);
             _PCB.updatePCBTable();
             _CPU.updateCPUTable();
+            _scheduler.cycle();
         };
 
         return Cpu;

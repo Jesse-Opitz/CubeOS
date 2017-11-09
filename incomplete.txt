@@ -1,6 +1,3 @@
-Add	a	shell	command,	runall,	to	execute	all	the	programs	at	once.
-|-> How do I call  run within shell.js?
-
 Add	a	shell	command,	kill	<pid>,	to	kill	an	active	process.
 |-> How kill??? Just delete PID from ready queue and PCB from resident queue??
 
@@ -18,3 +15,10 @@ SEE TODOs IN SHELL.JS
 -- Should I add base to the memory locations I am given?
 -------------------------------------------------------------------------------------------
 [optional]	Track	turnaround	time	and	wait	time	for	each	process.
+
+Project 4 - Use session storage, not local storage
+|-> Track 0 Sector 0 Block 0 is the MBR
+|-> Track 0 for directory
+|-> Rest are used for Data
+
+We will use chaining to link code in hard drive file code together

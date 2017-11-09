@@ -46,6 +46,13 @@ var TSOS;
             this.krnTrace("Creating and Launching the shell.");
             _OsShell = new TSOS.Shell();
             _OsShell.init();
+            
+            _readyQueue = new TSOS.Queue();
+            _residentQueue = new TSOS.Queue();
+            
+            // Initialize scheduler
+            _scheduler = new TSOS.Scheduler();
+            
             // Finally, initiate student testing protocol.
             if (_GLaDOS) {
                 _GLaDOS.afterStartup();
@@ -61,7 +68,7 @@ var TSOS;
             //
             // Unload the Device Drivers?
             // More?
-            //
+            // Yea in project 4 (╯°□°）╯︵ ┻━┻
             this.krnTrace("end shutdown OS");
         };
         Kernel.prototype.krnOnCPUClockPulse = function () {
@@ -78,6 +85,7 @@ var TSOS;
             }
             else if (_CPU.isExecuting) {
                 _CPU.cycle();
+                _scheduler.cycle();
             }
             else {
                 this.krnTrace("Idle");

@@ -8,7 +8,7 @@ var TSOS;
 (function (TSOS) {
     var PCB = (function () {
         // acc is accumulator
-        function PCB(PID, IR, program_counter, acc, X, Y, Z, base, limit, active) {
+        function PCB(PID, IR, program_counter, acc, X, Y, Z, base, limit, segment, active) {
             if (PID === void 0) {PID = -1;}
             if (IR === void 0) {IR = "00"}
             if (program_counter === void 0) {program_counter = 0;}
@@ -19,6 +19,7 @@ var TSOS;
             var baseLimit = _MemoryManager.getBaseLimit(_MemoryManager.getMemSegment());
             if (base === void 0) {base = baseLimit[0];}
             if (limit === void 0) {limit = baseLimit[1];}
+            if (segment === void 0) {segment = _segNumber;}
             if (active == void 0){active = 'Waiting';}
             
             this.PID = PID;
@@ -33,6 +34,7 @@ var TSOS;
             this.limit = limit;
             this.active = active; // I realize this should be status, after it's working
             // |-> TODO: Changing this should prob be a PCB function...I will handle that at some point
+            this.segment = segment;
             
             /*
               I use a stack to store PIDs.
@@ -58,10 +60,8 @@ var TSOS;
             // Write to next available segment.
             // Validation for segment being full is in
             // the shell load function in shell.js
-            _readyQueue[_MemoryManager.getMemSegment()] = this.PID;
+            //_readyQueue[_MemoryManager.getMemSegment()] = this.PID;
             
-            console.log("Available PIDs: " + _readyQueue);
-            this.active = 'Ready';
         }
         
         PCB.prototype.updatePCBTable = function () {

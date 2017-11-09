@@ -22,13 +22,13 @@ var TSOS;
         MemoryManager.prototype.write = function (opCodes){
             // Keeps track of which segment is next
             //var segment = _segNumber % 3; -- Old
-            var segment = this.getMemSegment();
+            var segment = _PCB.segment; //this.getMemSegment();
             
             // Gets tuple of base and limit
-            var baseLimit = this.getBaseLimit(segment);
+            //var baseLimit = this.getBaseLimit(segment);
             
-            var base = baseLimit[0];
-            var limit = baseLimit[1];
+            var base = _PCB.base;
+            var limit = _PCB.limit;
             
             // Clear memory
             // TODO: Proj 3 - Add base and limit
@@ -60,7 +60,6 @@ var TSOS;
             // _MemoryManager.updateMemTable(_Memory.bytes); - old call
             this.updateMemTable(_Memory.bytes);
             
-            _segNumber += 1;
         };
         
         // Updates the memory table
@@ -117,10 +116,10 @@ var TSOS;
         // Updates Ready Queue table
         MemoryManager.prototype.updateResQTable = function(){
             for (var i = 0; i < 3; i++){
-                if (_readyQueue[i] === -1){
+                if (_readyQueue.q[i] === undefined){
                     document.getElementById("ready" + i).innerHTML = '- No program loaded';
                 } else {
-                    document.getElementById("ready" + i).innerHTML = _readyQueue[i] + ' - ' + _residentQueue[i].active;
+                    document.getElementById("ready" + i).innerHTML = _readyQueue.q[i] + ' - ' + _residentQueue.q[i].active;
                 }
             }
         };
