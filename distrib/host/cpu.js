@@ -75,26 +75,30 @@ var TSOS;
                 
             }
             else {
+                // Get PCB's current base limit
+                //var baseLimit = _MemoryManager.getBaseLimit(_readyQueue.indexOf(_PCB.PID));
+                //var base = baseLimit[0];
+                //var limit = baseLimit[1];
+                var base = _PCB.base;
+                var limit = _PCB.limit;
+                
                 // Update IR
-                _PCB.IR = _Memory.bytes[_PCB.program_counter];
+                _PCB.IR = _Memory.bytes[_PCB.program_counter + base];
                 
-                var baseLimit = _MemoryManager.getBaseLimit(_readyQueue.indexOf(_PCB.PID));
+                // Change PCB active
+                _PCB.active = 'Running';
                 
-                console.log("HERE BASELIMIT: " + baseLimit);
-                var base = baseLimit[0];
-                var limit = baseLimit[1];
-                
-                console.log("HERE: " + base + " " + limit);
                 // Switch to handle 6502 op codes
                 switch(_Memory.bytes[_PCB.program_counter].toUpperCase()){
                     // HEX ALPLHABET
                     // 0 1 2 3 4 5 6 7 8 9 A B C D E F 10 11
                     // Change should be in cpu not pcb
-                    // TODO: Change all _PCB changes to CPU changes
+                    // TODO: Change all _PCB changes to CPU changes 
+                    // |-> I think I may change this to just a display thing...I like the PCB being constantly updated
                     // TODO: When reading a byte in memory change to a function in memory.js
                     // TODO: When changing memory bytes, should be a function in memory.js
-                    
-                    
+                    // |-> Umm..I'm gonna get Proj 3 working first, will cleanup eventually
+
                     case 'A9':
                         // Load acc with constant
                         

@@ -8,7 +8,7 @@ var TSOS;
 (function (TSOS) {
     var PCB = (function () {
         // acc is accumulator
-        function PCB(PID, IR, program_counter, acc, X, Y, Z, active) {
+        function PCB(PID, IR, program_counter, acc, X, Y, Z, base, limit, active) {
             if (PID === void 0) {PID = -1;}
             if (IR === void 0) {IR = "00"}
             if (program_counter === void 0) {program_counter = 0;}
@@ -16,6 +16,9 @@ var TSOS;
             if (X === void 0) {X = 0;}
             if (Y === void 0) {Y = 0;}
             if (Z === void 0) {Z = 0;}
+            var baseLimit = _MemoryManager.getBaseLimit(_MemoryManager.getMemSegment());
+            if (base === void 0) {base = baseLimit[0];}
+            if (limit === void 0) {limit = baseLimit[1];}
             if (active == void 0){active = 'Waiting';}
             
             this.PID = PID;
@@ -25,7 +28,11 @@ var TSOS;
             this.X = X;
             this.Y = Y;
             this.Z = Z;
-            this.active = active;
+            
+            this.base = base;
+            this.limit = limit;
+            this.active = active; // I realize this should be status, after it's working
+            // TODO: Changing this should prob be a PCB function...I will handle that at some point
             
             /*
               I use a stack to store PIDs.

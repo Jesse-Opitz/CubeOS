@@ -21,7 +21,7 @@ var TSOS;
         // Used when writing to full segment of memory
         MemoryManager.prototype.write = function (opCodes){
             // Keeps track of which segment is next
-            //var segment = _segNumber % 3;
+            //var segment = _segNumber % 3; -- Old
             var segment = this.getMemSegment();
             
             // Gets tuple of base and limit
@@ -108,18 +108,30 @@ var TSOS;
             }
             
             return [base, limit];
-        }
+        };
         
         // Since memory manager manages the segments, I'm guessing
         // it manages resident queue, as well?
         // I have no clue 
+        // TODO:I accidentally called this ResQ...Will change
+        // Updates Ready Queue table
         MemoryManager.prototype.updateResQTable = function(){
             for (var i = 0; i < 3; i++){
-                if (_readyQueue[i] === undefined){
-                    document.getElementById("ready" + i).innerHTML = '-';
+                if (_readyQueue[i] === -1){
+                    document.getElementById("ready" + i).innerHTML = '- No program loaded';
                 } else {
-                    document.getElementById("ready" + i).innerHTML = _readyQueue[i];
+                    document.getElementById("ready" + i).innerHTML = _readyQueue[i] + ' - ' + _residentQueue[i].active;
                 }
+            }
+        };
+        // Since memory manager manages the segments, I'm guessing
+        // it manages resident queue, as well?
+        // I have no clue 
+        // TODO:I accidentally called this ResQ...Will change
+        // Clears ReadyQueue table
+        MemoryManager.prototype.clearResQTable = function(){
+            for (var i = 0; i < 3; i++){
+                document.getElementById("ready" + i).innerHTML = '- No program loaded';
             }
         };
         

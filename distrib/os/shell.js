@@ -73,6 +73,12 @@ var TSOS;
             // run
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Runs a program in memory.")
             this.commandList[this.commandList.length] = sc;
+            // runall
+            sc = new TSOS.ShellCommand(this.shellRunall, "runall", "- Runs all programs in ready queue.")
+            this.commandList[this.commandList.length] = sc;
+            // kill <pid> 
+            sc = new TSOS.ShellCommand(this.shellRunall, "kill", "<pid> - Kills a program that is running.")
+            this.commandList[this.commandList.length] = sc;
             // clearmem
             sc = new TSOS.ShellCommand(this.shellClearmem, "clearmem", "- Clears memory");
             this.commandList[this.commandList.length] = sc;
@@ -365,10 +371,7 @@ var TSOS;
             
         };
         Shell.prototype.shellRun = function(args){
-            // TODO: Check the indexOf the PCB on run, run that segment
-            
-            // Runs the input pid
-            // **For now it runs whatever programs in memory, not a specific PID
+            // Runs the input process
             var found = false;
             if (args.length < 1) {
                 _StdOut.putText("Usage: run <pid> Please input a pid.");
@@ -380,7 +383,6 @@ var TSOS;
                     found = true;
                     // Store the running PID
                     var activePID = i;
-                    //console.log('Active PID: ' + activePID);
                 }
             }
             
@@ -397,19 +399,11 @@ var TSOS;
                     _PCB = _residentQueue[tempSegNum];
                     _PCB.updatePCBTable();
                     
-                    /*
-                    * Older code
-                    // Load the correct PCB
-                    for (var i = 1; i < _residentQueue.length; i++){
-                        //console.log("Resident Queue: " + _residentQueue[i]);
-                        if (_residentQueue[i].PID == activePID){
-                            _PCB = _residentQueue[i]
-                            _PCB.updatePCBTable();
-                            break;
-                        }
-                    }*/
-                    console.log("CYCLE")
                     _CPU.cycle();
+                    
+                    // TODO: After a program finishes, erase it from the ready queue 
+                    // OR Reset program counter back to 0
+                    // TODO: Implement context switches??????
                 }
             }else{
                 if (found != true){
@@ -421,12 +415,28 @@ var TSOS;
             }
             
         };
+        //TODO: Make this work... How do you run shellRun inside shell?
+        Shell.prototype.shellRunall = function(args){
+            // Runs all processes in ready queue
+            for (var i = 0; i < _readyQueue.length; i++){
+                if (i != -1){
+                    Shell.shellRun(i);
+                }
+            }
+        };
+        //TODO: Make this work... What do I do here?
+        Shell.prototype.shellKill = function(args){
+            // Kills a process that is executing
+            
+        };
         Shell.prototype.shellClearmem = function (args){
             // Clears memory
             _Memory.clearMem(0, _DefaultMemorySize);
             _MemoryManager.updateMemTable();
-            _readyQueue = [];
-            _residentQueue = [];
+            for (var i = 0; i < _readyQueue.length; i++){
+                _readyQueue[i] = -1;
+                _residentQueue[i] = -1;
+            }
             _segNumber = 0;
             _MemoryManager.updateResQTable();
 
