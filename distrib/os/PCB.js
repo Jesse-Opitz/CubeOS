@@ -32,7 +32,7 @@ var TSOS;
             this.base = base;
             this.limit = limit;
             this.active = active; // I realize this should be status, after it's working
-            // TODO: Changing this should prob be a PCB function...I will handle that at some point
+            // |-> TODO: Changing this should prob be a PCB function...I will handle that at some point
             
             /*
               I use a stack to store PIDs.

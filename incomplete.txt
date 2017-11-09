@@ -1,0 +1,22 @@
+Add	a	shell	command,	runall,	to	execute	all	the	programs	at	once.
+
+Add	a	shell	command,	kill	<pid>,	to	kill	an	active	process.
+
+Develop	a	CPU	scheduler	in	the	client	OS	using	Round	Robin	scheduling	
+with	the	user-speciWied	quantum	measured	in	clock	ticks	(default	=	6).	
+• Make	the	client	OS	control	the	host	CPU	with	the	CPU	scheduler.	
+• Log	all	scheduling	events.	
+
+Implement	context	switches	with	software	interrupts.		Be	sure	to	update	
+the	mode	bit	(if	appropriate),	the	PCBs,	and	the	Ready	queue.	
+
+Delete processes from the ready queue that after running.
+
+SEE TODOs IN SHELL.JS
+
+-------------------------------------------------------------------------------------------
+TEST: Enforce	memory	partition	boundaries	at	all	times.	
+TEST: Detect	and	gracefully	handle	errors	like	invalid	op	codes,	missing	
+operands	(if	you	can	detect	that),	and	most	importantly,	memory	out	of	
+bounds	or	access	violation	attempts.	
+[optional]	Track	turnaround	time	and	wait	time	for	each	process.

@@ -337,13 +337,14 @@ var TSOS;
             // |->Makes copy paste easier
             var pattern = new RegExp("^[a-fA-F0-9 \n]+$");
             
-            var isHex = pattern.test(opCodes)
+            var isHex = pattern.test(opCodes);
             if (isHex) {
                 //if (_readyQueue.length < _MaxProcesses){
                 if (_readyQueue[_MemoryManager.getMemSegment()] == -1){
                     // Create a new PCB
                     _PCB = new TSOS.PCB(_PID);
                     console.log("Created new PCB: " + _PID);
+                    console.log("Resident Queue updated: " + _residentQueue);
                     _residentQueue[_MemoryManager.getMemSegment()] = _PCB;
                     
                     // Updates HTML PCB Table
@@ -383,6 +384,12 @@ var TSOS;
                     found = true;
                     // Store the running PID
                     var activePID = i;
+                    //console.log("Args --: " + args[0]);
+                    //console.log("Ready queue item: " + _readyQueue[i]);
+                    //console.log("Active PID--: " + activePID);
+                    //console.log("Index: " + _readyQueue.indexOf(activePID));
+                    //var tempSegNum = _readyQueue.indexOf(activePID);
+                    //console.log("Object: " + _residentQueue[activePID]);
                 }
             }
             
@@ -394,9 +401,10 @@ var TSOS;
                     _StdOut.putText("Running process: " + args[0]);
                     
                     // Segment of memory
-                    var tempSegNum = _readyQueue.indexOf(activePID);
-                    console.log(_residentQueue[tempSegNum]);
-                    _PCB = _residentQueue[tempSegNum];
+                    //var tempSegNum = _readyQueue.indexOf(activePID);
+                    // console.log("PCB in use: " + _residentQueue[activePID]);
+                    // console.log("Active PID: " + _residentQueue[activePID]); //tempSegNum);
+                    _PCB = _residentQueue[activePID]; //[tempSegNum];
                     _PCB.updatePCBTable();
                     
                     _CPU.cycle();

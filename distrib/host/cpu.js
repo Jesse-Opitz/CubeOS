@@ -126,7 +126,7 @@ var TSOS;
                         hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
-                        loc = parseInt(hexloc, 16);
+                        loc = parseInt(hexloc, 16) + base;
                         
                         // Load accumulator from location
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
@@ -152,7 +152,7 @@ var TSOS;
                         hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to a decimal int
-                        loc = parseInt(hexloc, 16); 
+                        loc = parseInt(hexloc, 16) + base; 
                         
                         // Increment pointer past first location to check for 00
                         _PCB.program_counter += 1;
@@ -167,6 +167,8 @@ var TSOS;
                             _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
+                            _StdOut.advanceLine();
+                            _StdOut.putText(">");
                         }
                         else {
                             // Store accumulator in 
@@ -201,7 +203,7 @@ var TSOS;
                         hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
-                        loc = parseInt(hexloc, 16); 
+                        loc = parseInt(hexloc, 16) + base; 
                         
                         // Increment pointer past first location to check for 00
                         _PCB.program_counter += 1;
@@ -269,7 +271,7 @@ var TSOS;
                         hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
-                        loc = parseInt(hexloc, 16); 
+                        loc = parseInt(hexloc, 16) + base; 
                         
                         // Increment pointer past first location to check for 00
                         _PCB.program_counter += 1;
@@ -284,6 +286,8 @@ var TSOS;
                             _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
+                            _StdOut.advanceLine();
+                            _StdOut.putText(">");
                         }
                         else{
                             // Gets the number at the location in memory
@@ -326,7 +330,7 @@ var TSOS;
                         hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
-                        loc = parseInt(hexloc, 16); 
+                        loc = parseInt(hexloc, 16) + base; 
                         
                         // Increment pointer past first location to check for 00
                         _PCB.program_counter += 1;
@@ -341,6 +345,8 @@ var TSOS;
                             _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
+                            _StdOut.advanceLine();
+                            _StdOut.putText(">");
                         }
                         else{
                             // Gets the number at the location in memory
@@ -384,7 +390,7 @@ var TSOS;
                         hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
-                        loc = parseInt(hexloc, 16); 
+                        loc = parseInt(hexloc, 16) + base; 
                         
                         // Increment pointer past first location to check for 00
                         _PCB.program_counter += 1;
@@ -399,6 +405,8 @@ var TSOS;
                             _StdOut.putText("Invalid memory access! Killing program.");
                             this.isExecuting = false;
                             this.isDone = true;
+                            _StdOut.advanceLine();
+                            _StdOut.putText(">");
                         }
                         else {
                             // Gets the number at the location in memory
@@ -440,10 +448,10 @@ var TSOS;
                             n = parseInt(hexn, 16);
                             var newloc = parseInt((_PCB.program_counter + base)) + n;
                             //document.getElementById("status").innerHTML = "From "+ _PCB.program_counter +"Jumping " + n + " to " + newloc;
-                            if (newloc < 256){
+                            if (newloc < limit){
                                 _PCB.program_counter = newloc + 1;
                             } else{
-                                _PCB.program_counter = newloc - 255;
+                                _PCB.program_counter = newloc - limit;
                             }
                             
                         } else{
@@ -467,7 +475,7 @@ var TSOS;
                         hexloc = _Memory.bytes[_PCB.program_counter + base];
                         
                         // Translate string hex to an int
-                        loc = parseInt(hexloc, 16); 
+                        loc = parseInt(hexloc, 16) + base; 
                         
                         // Increment pointer past first location to check for 00
                         _PCB.program_counter += 1;
@@ -480,8 +488,10 @@ var TSOS;
                         // loc2 can only be 00 for proj 2 b/c FF = 255
                         if ((loc > limit) || (loc < base) || loc2 != '00'){
                             _StdOut.putText("Invalid memory access! Killing program.");
+                            _StdOut.putText(">");
                             this.isExecuting = false;
                             this.isDone = true;
+                            _StdOut.advanceLine();
                         }
                         else {
                             // Gets the number at the location in memory
@@ -519,26 +529,35 @@ var TSOS;
                         }
                         else if (_PCB.X == "02") {
                             // Print text until "00"
-                            var loc = parseInt(_PCB.Y, 16);
+                            var loc = parseInt(_PCB.Y, 16) + base;
                             
                             var terminated = false;
                             var inByte;
                             var fullStr = '';
-                            while(terminated === false){
-                                // Get current byte
-                                inByte = _Memory.bytes[loc];
-                                
-                                // 00 terminates string
-                                if (inByte == '00'){
-                                    terminated = true;
-                                }else{
-                                    document.getElementById("status").innerHTML = parseInt(inByte, 16);
-                                    // Get the full string in characters
-                                    var charCode = parseInt(inByte, 16);
-                                    _StdOut.putText(String.fromCharCode(charCode));
-                                    //fullStr += String.fromCharCode(charCode);
+                            if (loc < limit && loc > base){
+                                while(terminated === false){
+                                    // Get current byte
+                                    inByte = _Memory.bytes[loc];
+                                    
+                                    // 00 terminates string
+                                    if (inByte == '00'){
+                                        terminated = true;
+                                    }else{
+                                        document.getElementById("status").innerHTML = parseInt(inByte, 16);
+                                        // Get the full string in characters
+                                        var charCode = parseInt(inByte, 16);
+                                        _StdOut.putText(String.fromCharCode(charCode));
+                                        //fullStr += String.fromCharCode(charCode);
+                                    }
+                                    loc += 1;
                                 }
-                                loc += 1;
+                            }
+                            else{
+                                _StdOut.putText("Invalid memory access! Killing program.");
+                                this.isExecuting = false;
+                                this.isDone = true;
+                                _StdOut.advanceLine();
+                                _StdOut.putText(">");
                             }
                             
                             //_StdOut.putText(fullStr);
