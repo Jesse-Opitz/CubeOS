@@ -13,10 +13,10 @@ the	mode	bit	(if	appropriate),	the	PCBs,	and	the	Ready	queue.
 Delete processes from the ready queue that after running.
 
 SEE TODOs IN SHELL.JS
-
+-- Should I add base to the memory locations I am given?
 -------------------------------------------------------------------------------------------
-TEST: Enforce	memory	partition	boundaries	at	all	times.	
+TEST: Enforce	memory	partition	boundaries	at	all	times.	CHECK
 TEST: Detect	and	gracefully	handle	errors	like	invalid	op	codes,	missing	
 operands	(if	you	can	detect	that),	and	most	importantly,	memory	out	of	
-bounds	or	access	violation	attempts.	
+bounds	or	access	violation	attempts.	 CHECK
 [optional]	Track	turnaround	time	and	wait	time	for	each	process.
