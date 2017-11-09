@@ -27,6 +27,7 @@ var _Memory; // Instance of Memory class for Main memory
 var _MemoryManager; // Instance of memory manager
 
 var _PCB; // Instance of a Process Control Block (PCB Class)
+var _residentQueue = [-1, -1, -1]; // Stores the PCBs created
 
 var _segNumber = 0; // Number for which segment is next to put code in
 
@@ -34,7 +35,7 @@ var _PID = 0; // Current PCB ID
 var _MaxProcesses = 3;
 
 // For scheduling
-var _readyQueue = [];
+var _readyQueue = [-1, -1, -1];
 var _quantum = 6;
 
 var _DefaultMemorySize = 768; // Sets system memory size

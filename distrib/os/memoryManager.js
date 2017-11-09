@@ -24,22 +24,11 @@ var TSOS;
             //var segment = _segNumber % 3;
             var segment = this.getMemSegment();
             
-            // Segment 0 is the first 1/3 of memory
-            // Segment 1 is the second 1/3 of memory
-            // Segment 2 is the third 1/3 of memory
-            // Used to get base and limit
-            if (segment === 0){
-                var base = 0;
-                var limit = (_DefaultMemorySize/3) - 1;
-            }
-            else if (segment === 1){
-                var base = _DefaultMemorySize/3;
-                var limit = ((_DefaultMemorySize/3) * 2) - 1;
-            }
-            else if (segment === 2){
-                var base = ((_DefaultMemorySize/3) * 2);
-                var limit = _DefaultMemorySize - 1;
-            }
+            // Gets tuple of base and limit
+            var baseLimit = this.getBaseLimit();
+            
+            var base = baseLimit[0];
+            var limit = baseLimit[1];
             
             // Clear memory
             // TODO: Proj 3 - Add base and limit
@@ -97,7 +86,45 @@ var TSOS;
         // returns current segment
         MemoryManager.prototype.getMemSegment = function(){
             return segment = _segNumber % 3;
+        };
+        
+        // returns tuple of base and limit
+        MemoryManager.prototype.getBaseLimit = function(){
+            //var segment = _segNumber % 3;
+            var segment = this.getMemSegment();
+            
+            // Segment 0 is the first 1/3 of memory
+            // Segment 1 is the second 1/3 of memory
+            // Segment 2 is the third 1/3 of memory
+            // Used to get base and limit
+            if (segment === 0){
+                var base = 0;
+                var limit = (_DefaultMemorySize/3) - 1;
+            }
+            else if (segment === 1){
+                var base = _DefaultMemorySize/3;
+                var limit = ((_DefaultMemorySize/3) * 2) - 1;
+            }
+            else if (segment === 2){
+                var base = ((_DefaultMemorySize/3) * 2);
+                var limit = _DefaultMemorySize - 1;
+            }
+            
+            return [base, limit];
         }
+        
+        // Since memory manager manages the segments, I'm guessing
+        // it manages resident queue, as well?
+        // I have no clue 
+        MemoryManager.prototype.updateResQTable = function(){
+            for (var i = 0; i < 3; i++){
+                if (_readyQueue[i] === undefined){
+                    document.getElementById("ready" + i).innerHTML = '-';
+                } else {
+                    document.getElementById("ready" + i).innerHTML = _readyQueue[i];
+                }
+            }
+        };
         
         // Used to edit specific parts of memory
         // Mainly for storing the accumulator in memory, op code 8D

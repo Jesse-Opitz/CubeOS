@@ -333,21 +333,30 @@ var TSOS;
             
             var isHex = pattern.test(opCodes)
             if (isHex) {
-                // Create a new PCB
-                _PCB = new TSOS.PCB(_PID);
-                console.log("Created new PCB: " + _PID);
-                
-                // Updates HTML PCB Table
-                _PCB.updatePCBTable();
-                
-                // Write opcodes to memory
-                _MemoryManager.write(opCodes);
-                
-                // Tell user the PID thats loaded
-                _StdOut.putText("Program with PID " + _PID + " Loaded.")
-                
-                // Increment PID
-                _PID = _PID + 1;
+                //if (_readyQueue.length < _MaxProcesses){
+                if (_readyQueue[_MemoryManager.getMemSegment()] == -1){
+                    // Create a new PCB
+                    _PCB = new TSOS.PCB(_PID);
+                    console.log("Created new PCB: " + _PID);
+                    
+                    // Updates HTML PCB Table
+                    _PCB.updatePCBTable();
+                    
+                    // Write opcodes to memory
+                    _MemoryManager.write(opCodes);
+                    
+                    // Tell user the PID thats loaded
+                    _StdOut.putText("Program with PID " + _PID + " Loaded.")
+                    
+                    // Increment PID
+                    _PID = _PID + 1;
+                    
+                    console.log("Ready Queue: " + _readyQueue);
+                    _MemoryManager.updateResQTable();
+                }
+                else {
+                    _StdOut.putText("Unable to load program: ready queue is full.")
+                }
             }
             else{
                 _StdOut.putText("Invalid user input code. Must be between a-f, A-F, or 0-9. HEX CODE ONLY!")
@@ -366,6 +375,9 @@ var TSOS;
             for (var i = 0; i < _readyQueue.length; i++){
                 if (args[0] == _readyQueue[i]){
                     found = true;
+                    // Store the running PID
+                    var activePID = i;
+                    //console.log('Active PID: ' + activePID);
                 }
             }
             
@@ -375,6 +387,16 @@ var TSOS;
                     
                 }else{
                     _StdOut.putText("Running process:" + args[0]);
+                    // Load the correct PCB
+                    //console.log('Here: ' + _residentQueue[1].PID)
+                    for (var i = 1; i < _residentQueue.length; i++){
+                        //console.log("Resident Queue: " + _residentQueue[i]);
+                        if (_residentQueue[i].PID === activePID){
+                            _PCB = _residentQueue[i]
+                            _PCB.updatePCBTable();
+                            break;
+                        }
+                    }
                     _CPU.cycle();
                 }
             }else{
@@ -392,7 +414,11 @@ var TSOS;
             _Memory.clearMem(0, _DefaultMemorySize);
             _MemoryManager.updateMemTable();
             _readyQueue = [];
-        }
+            _residentQueue = [];
+            _segNumber = 0;
+            _MemoryManager.updateResQTable();
+
+        };
         Shell.prototype.shellQuantum = function (args){
             var intPatt = new RegExp("[0-9]+");
             
@@ -402,10 +428,10 @@ var TSOS;
             else {  // Sets quantum
                 _quantum = args[0];
             }
-        }
+        };
         Shell.prototype.shellPs = function (args){
             _StdOut.putText('Ready PIDS: ' + _readyQueue);
-        }
+        };
         return Shell;
     })();
     TSOS.Shell = Shell;

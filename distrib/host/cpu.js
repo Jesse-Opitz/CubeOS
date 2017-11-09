@@ -194,11 +194,13 @@ var TSOS;
                         
                         // Gets second location hex value
                         loc2 = _Memory.bytes[_PCB.program_counter];
-                        
+                        var baseLimit = _MemoryManager.getBaseLimit();
+                        var base = baseLimit[0];
+                        var limit = baseLimit[1];
                         // TODO:Proj 3 - Change 255 to limit
                         // Verify location is available to this program
                         // loc2 can only be 00 for proj 2 b/c FF = 255
-                        if ((loc > 255) || (loc < 0) || loc2 != '00'){
+                        if ((loc > limit) || (loc < base) || loc2 != '00'){
                             _StdOut.putText("Invalid memory access! Killing program.");
                             _Console.advanceLine();
                             _StdOut.putText(">");
