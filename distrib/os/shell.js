@@ -423,7 +423,8 @@ var TSOS;
                     
                     // TODO: After a program finishes, erase it from the ready queue 
                     // OR Reset program counter back to 0
-                    _readyQueue.q.splice(_readyQueue.q.indexOf(_PCB.PID), 1);
+                    // Don't need this, I kill program in a break statement
+                    //_readyQueue.q.splice(_readyQueue.q.indexOf(_PCB.PID), 1);
                 }
             }else{
                 if (found != true){

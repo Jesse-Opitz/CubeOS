@@ -86,13 +86,20 @@ var TSOS;
                 var base = _PCB.base;
                 var limit = _PCB.limit;
                 
+                /*
+                Remember that issue with my jumps?
+                Yea, this is a work around for that...
+                Somewhere I am changing the program counter
+                to the new location + base, but the rest of my 
+                op codes are adding the base to the program counter
+                */
+                if (_PCB.program_counter > 256){
+                    _PCB.program_counter = _PCB.program_counter - _PCB.base;
+                }
+                
                 // Update IR
-                if (_PCB.program_counter < 256){
-                    _PCB.IR = _Memory.bytes[_PCB.program_counter + base];
-                }
-                else {
-                    _PCB.IR = _Memory.bytes[_PCB.program_counter];
-                }
+                _PCB.IR = _Memory.bytes[_PCB.program_counter + base];
+                
                 console.log("PCB IR is " + _PCB.IR);
                 
                 // Change PCB active
@@ -473,17 +480,18 @@ var TSOS;
                         
                             // Translate string hex to an int
                             n = parseInt(hexn, 16);
-                            var newloc = parseInt((_PCB.program_counter + base)) + n;
+                            var newloc = parseInt(_PCB.program_counter) + n;
                             //document.getElementById("status").innerHTML = "From "+ _PCB.program_counter +"Jumping " + n + " to " + newloc;
                             if (newloc < limit){
                                 if (_PCB.segment > 0){
-                                    console.log("Before: " + newloc);
+                                    //console.log("Before: " + newloc);
                                     //newloc++;
-                                    console.log("Added 1 to newloc: " + newloc);
+                                    //console.log("Added 1 to newloc: " + newloc);
+                                    console.log("newloc: " + newloc);
                                 }
                                 _PCB.program_counter = newloc + 1;
                             } else{
-                                console.log("nah here");
+                                //console.log("nah here");
                                 _PCB.program_counter = newloc - limit;
                             }
                             console.log("Program counter: " + _PCB.program_counter);
@@ -506,7 +514,14 @@ var TSOS;
                         
                         // Get memory location
                         // CHANGE THIS SO ITS A MEMORY MANAGER FUNCTION
-                        hexloc = _Memory.bytes[_PCB.program_counter + base];
+                        // This is a work around for jumps
+                        // Jumps are changing the program counter to above 256
+                        if (_PCB.program_counter < 256){
+                            hexloc = _Memory.bytes[_PCB.program_counter + base];
+                        }
+                        else{
+                            hexloc = _Memory.bytes[_PCB.program_counter];
+                        }
                         
                         // Translate string hex to an int
                         loc = parseInt(hexloc, 16) + base; 
@@ -571,6 +586,7 @@ var TSOS;
                             var fullStr = '';
                             if (loc < limit && loc > base){
                                 while(terminated === false){
+                                    // ISSUE here?
                                     // Get current byte
                                     inByte = _Memory.bytes[loc];
                                     
