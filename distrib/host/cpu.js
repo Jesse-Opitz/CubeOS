@@ -18,7 +18,7 @@ var TSOS;
     var Cpu = (function () {
         function Cpu(PC, IR, Acc, Xreg, Yreg, Zflag, isExecuting, isSingleStep) {
             if (PC === void 0) { PC = 0; }
-            if (IR === void 0) { IR = "00";}
+            if (IR === void 0) { IR = "--";}
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
             if (Yreg === void 0) { Yreg = 0; }
@@ -60,12 +60,14 @@ var TSOS;
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
             _PCB.active = 'Executing';
+            _MemoryManager.updateResQTable();
             _progCounter++;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
-            if(this.isSingleStep === false){
-                this.isExecuting = true;
-            }
+            //if(this.isSingleStep === false){
+            this.isExecuting = true;
+            
+            //}
             var isDone = false;
             
             // I got back to late, now I realize this is redundant
@@ -85,7 +87,13 @@ var TSOS;
                 var limit = _PCB.limit;
                 
                 // Update IR
-                _PCB.IR = _Memory.bytes[_PCB.program_counter + base];
+                if (_PCB.program_counter < 256){
+                    _PCB.IR = _Memory.bytes[_PCB.program_counter + base];
+                }
+                else {
+                    _PCB.IR = _Memory.bytes[_PCB.program_counter];
+                }
+                console.log("PCB IR is " + _PCB.IR);
                 
                 // Change PCB active
                 _PCB.active = 'Running';
@@ -96,14 +104,13 @@ var TSOS;
                     // 0 1 2 3 4 5 6 7 8 9 A B C D E F 10 11
                     // Change should be in cpu not pcb
                     // TODO: Change all _PCB changes to CPU changes 
-                    // |-> I think I may change this to just a display thing...I like the PCB being constantly updated
+                    // |-> I think I may change this to just a display thing if anything b/c I like the PCB being constantly updated
                     // TODO: When reading a byte in memory change to a function in memory.js
                     // TODO: When changing memory bytes, should be a function in memory.js
                     // |-> Umm..I'm gonna get Proj 3 working first, will cleanup eventually
 
                     case 'A9':
                         // Load acc with constant
-                        
                         // Skip the A9, we know what it is
                         _PCB.program_counter += 1;
                         
@@ -378,9 +385,20 @@ var TSOS;
                         // Break/system call
                         // Ends program
                         _PCB.program_counter += 1;
-                        console.log("found break");
-                        //console.log("IR: " + _PCB.IR);
-                        //this.isExecuting = false;
+                        
+                        var indOfPID = _readyQueue.q.indexOf(_PCB.PID);
+                        _readyQueue.q.splice(indOfPID, 1);
+                        console.log("BREAK: removed " + _PCB.PID + " from ready queue.")
+                        
+                        for (var i = 0; i < _residentQueue.getSize(); i++){
+                            if (_residentQueue.q[i].PID == _PCB.PID){
+                                _residentQueue.q.splice(i,1);
+                                console.log("BREAK: removed " + _PCB.PID + " from resident queue.")
+                                break;
+                            }
+                        }
+                        _StdOut.advanceLine();
+                        _StdOut.putText('>');
                         break;
                     case 'EC':
                         // Compare byte in memory to X reg,
@@ -458,10 +476,17 @@ var TSOS;
                             var newloc = parseInt((_PCB.program_counter + base)) + n;
                             //document.getElementById("status").innerHTML = "From "+ _PCB.program_counter +"Jumping " + n + " to " + newloc;
                             if (newloc < limit){
+                                if (_PCB.segment > 0){
+                                    console.log("Before: " + newloc);
+                                    //newloc++;
+                                    console.log("Added 1 to newloc: " + newloc);
+                                }
                                 _PCB.program_counter = newloc + 1;
                             } else{
+                                console.log("nah here");
                                 _PCB.program_counter = newloc - limit;
                             }
+                            console.log("Program counter: " + _PCB.program_counter);
                             
                         } else{
                             _PCB.program_counter += 1;
@@ -588,15 +613,18 @@ var TSOS;
                     isDone = true;
                     //this.isExecuting = false;
                     
+                    var currPIDLocInRQ = _readyQueue.q.indexOf(_PCB.PID);
+                    _readyQueue.q.splice(currPIDLocInRQ, 1);
+                    
                     _StdOut.putText("To many bytes in memory or no break at end of code. You can not leave your cube! Execution killed.");
                     _Console.advanceLine();
                     _StdOut.putText(">");
                 }
             }
+            
             _MemoryManager.updateMemTable(_Memory.bytes);
             _PCB.updatePCBTable();
             _CPU.updateCPUTable();
-            _scheduler.cycle();
         };
 
         return Cpu;

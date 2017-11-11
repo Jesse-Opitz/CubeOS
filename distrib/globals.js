@@ -37,7 +37,6 @@ var _MaxProcesses = 3;
 // For scheduling
 var _scheduler;
 var _readyQueue;
-var _quantum = 6;
 var _progCounter = 0;
 
 var _DefaultMemorySize = 768; // Sets system memory size

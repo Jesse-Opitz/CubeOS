@@ -403,22 +403,24 @@ var TSOS;
                 }else{
                     _StdOut.putText("Running process: " + args[0]);
                     var resQIndex = -1;
+                    var found = false;
                     for (var i = 0; i < _residentQueue.getSize(); i++){
                         if (_residentQueue.q[i].PID == activePID){
                             resQIndex = i;
-                            break;
+                            found = true;
                         }
                     }
-                    
-                    // Segment of memory
-                    _PCB = _residentQueue.q[resQIndex];
-                    _PCB.updatePCBTable();
+                    if(found){ //TODO: I think there is an issue here somewhere
+                        // Segment of memory
+                        _PCB = _residentQueue.q[resQIndex];
+                        _PCB.updatePCBTable();
+                    }
+                    else{
+                        console.log('PCB not found in resident queue.');
+                    }
                     
                     _CPU.cycle();
                     
-                    console.log('Proccess ' + activePID + ' finished.');
-                    _CPU.isExecuting = false;
-                       
                     // TODO: After a program finishes, erase it from the ready queue 
                     // OR Reset program counter back to 0
                     _readyQueue.q.splice(_readyQueue.q.indexOf(_PCB.PID), 1);
@@ -433,16 +435,21 @@ var TSOS;
             }
             
         };
-        //TODO: Make this work... How do you run shellRun inside shell?
         Shell.prototype.shellRunall = function(args){
             // Runs all processes in ready queue
+            _PCB = _residentQueue.q[0];
             _CPU.cycle()
             
         };
-        //TODO: Make this work... What do I do here?
         Shell.prototype.shellKill = function(args){
             // Kills a process that is executing
-            
+            // kill <pid>
+            if (args.length < 1 || args.length > 1){
+                _StdOut.putText("Usage: kill <pid> Please input an valid PID.")
+            }
+            else{
+                _scheduler.killProcess(args[0]);
+            }
         };
         Shell.prototype.shellClearmem = function (args){
             // Clears memory
@@ -462,6 +469,7 @@ var TSOS;
             }
             else {  // Sets quantum
                 _scheduler.quantum = args[0];
+                console.log("Quantum changed to " + args[0]);
             }
         };
         Shell.prototype.shellPs = function (args){

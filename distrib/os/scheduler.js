@@ -7,42 +7,106 @@
 var TSOS;
 (function (TSOS) {
     var Scheduler = (function () {
-        function Scheduler(quantum, mode, isActive) {
-            if (quantum === void 0) {quantum = 6;}
+        function Scheduler(quantum, mode, isActive, killPID) {
+            if (quantum === void 0) {quantum = 6000;}
             if (mode === void 0) {mode = 'round-robin';}
             if (isActive === void 0) {isActive = false;}
+            if (killPID === void 0) {killPID = -1;}
             
             this.quantum = quantum;
             this.mode = mode;
             this.isActive = isActive;
+            
+            this.killPID = killPID;
         }
+        
+        Scheduler.prototype.killProcess = function (pid){
+            for (var i = 0; i < _readyQueue.getSize();i++){
+                if (_readyQueue.q[i].PID == pid){
+                    var indexOfReadyQ = i;
+                    console.log("Killing resident queue pid: " + _residentQueue.q[i]);
+                }
+            }
+            
+            for (var i = 0; i < residentQueue.getSize(); i++){
+                if (_residentQueue.q[i].PID == pid){
+                    var indexOfResQ = i;
+                    console.log("Killing resident queue pid: " + _residentQueue.q[i]);
+                }
+            }
+            
+            _readyQueue.q.splice(indexOfReadyQ, 1);
+            _residentQueue.q.splice(indexOfResQ, 1);
+        };
         
         Scheduler.prototype.cycle = function (){
             // Scheduler cycle event
             // Project 4 has multiple scheduling schemes.
             // This allows capability for that. 
-            switch (this.mode){
-                case 'round-robin':
-                    this.roundRobin();
-                    break;
-                default:
-                    this.roundRobin();
-                    break;
-            }
+            this.roundRobin();
+            
         };
         
         Scheduler.prototype.contextSwitch = function (){
             // Switch processess
+            console.log("Context Switch");
+            console.log("PCB IR is " + _PCB.IR);
+            // If the program breaks
+            if (_PCB.IR == '00'){
+                console.log("Found break");
+                _PCB.active = 'Complete';
+                //_readyQueue.q.splice(0,1);
+                console.log("ready queue: " + _readyQueue.toString());
+                // If there is no more programs left in the ready queue
+                if (_readyQueue.getSize() == 0){ // Stop executing
+                    console.log("Here: " + _readyQueue.getSize());
+                    _CPU.isExecuting = false;
+                    _scheduler.isActive = false;
+                } else { // Go to the next PID
+                    console.log("ready queue in else: " + _readyQueue.toString());
+                    console.log("resident queue: " + _residentQueue.toString());
+                    console.log("First or last in res q: " + _residentQueue.q[0].PID)
+                    // Gets new PID
+                    newPID = _readyQueue.q[0];
+                    console.log("newPID: " + newPID);
+                    // Updates _PCB to correct PCB
+                    for (var i = 0; i < _residentQueue.getSize();i++){
+                        if (_residentQueue.q[i].PID == newPID){
+                            _PCB = _residentQueue.q[i];
+                            console.log("New PCB: " + _residentQueue.q[i])
+                        }
+                    }
+                }
+            } else{
+                // Take old PID off the front of ready queue
+                // Put it on the back of the queue
+                var oldPID = _readyQueue.dequeue();
+                
+                _readyQueue.enqueue(oldPID);
+                
+                // Updates _PCB to correct PCB
+                for (var i = 0; i < _residentQueue.getSize();i++){
+                    if (_residentQueue.q[i].PID == _readyQueue.q[0]){
+                        _PCB = _residentQueue.q[i];
+                        break;
+                    }
+                }
+            }
             
-            // Gets segment of new process
-            //var tempSegment = _readyQueue.indexOf(newPID);
-            
-            // Changes PCB to the PCB of that new process
-            //_PCB = _residentQueue[tempSegment];
-            //_PCB = _residentQueue.q[segment];
-            var oldPCB = _readyQueue.dequeue();
+            /*
             if (_PCB.IR != '00'){
-                _readyQueue.enqueue(_PCB);
+                console.log("OLD PCB: " + oldPCB.PID);
+                
+                var newPID = _readyQueue.q[0];
+                console.log("New PID: " + newPID);
+                for (var i = 0; i < _residentQueue.getSize(); i++){
+                    if (_residentQueue.q[i].PID == newPID){
+                        _PCB = _residentQueue.q[i];
+                        break;
+                    }
+                }
+                _readyQueue.enqueue(_PCB.PID);
+                console.log("Ready Queue: " + _readyQueue.toString());
                 _PCB.active = 'Ready';
             }
             else{
@@ -52,11 +116,12 @@ var TSOS;
                         _residentQueue.q.splice(i, 1);
                     }
                 }
-                console.log("PCB Finished: " + _PCB);
-                console.log("Current Resident Queue: " + _residentQueue.toString() + " PID Of 0: " + _residentQueue.q[0].PID);
-                console.log("Current Ready Queue: " + _readyQueue.toString());
-            }
-            if (_readyQueue.getSize() > 0){
+            }*/
+            
+            
+            //console.log("Current PID: " + _PCB.PID);
+            /*
+            if (_readyQueue.getSize() > 0) {
                 var newPID = _readyQueue.q[0];
                 for (var i = 0; i < _residentQueue.getSize(); i++){
                     if (_residentQueue.q[i].PID == newPID){
@@ -64,12 +129,11 @@ var TSOS;
                         break;
                     }
                 }
-            } else{
-                _CPU.isExecuting = false;
             }
+            else{
+                _CPU.isExecuting = false;
+            }*/
             
-            
-            console.log("New PCB: " + oldPCB);
             _MemoryManager.updateResQTable();
             _PCB.updatePCBTable();
             
@@ -85,7 +149,10 @@ var TSOS;
         
         Scheduler.prototype.roundRobin = function (){
             // Implements round robin scheduling
+            console.log("PID-:" + _PCB.PID + " Quantum: " + _progCounter);
             if (_progCounter >= this.quantum || _PCB.IR == '00'){
+                console.log("PID: " + _PCB.PID);
+                console.log("Ready Queue: " + _readyQueue.q.toString())
                 this.contextSwitch();
                 _progCounter = 0;
             }
