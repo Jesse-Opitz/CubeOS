@@ -94,7 +94,7 @@ var TSOS;
                 op codes are adding the base to the program counter
                 */
                 if (_PCB.program_counter > 256){
-                    _PCB.program_counter = _PCB.program_counter - _PCB.base;
+                    _PCB.program_counter = _PCB.program_counter - base;
                     console.log("Work around used, new counter: " + _PCB.program_counter);
                 }
                 
