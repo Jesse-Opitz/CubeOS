@@ -95,6 +95,7 @@ var TSOS;
                 */
                 if (_PCB.program_counter > 256){
                     _PCB.program_counter = _PCB.program_counter - _PCB.base;
+                    console.log("Work around used, new counter: " + _PCB.program_counter);
                 }
                 
                 // Update IR
@@ -391,8 +392,10 @@ var TSOS;
                     case '00':
                         // Break/system call
                         // Ends program
+                        // Only adds 1, program is killed in scheduler
                         _PCB.program_counter += 1;
-                        
+                        //_scheduler.killProcess(_PCB.PID);
+                        /*
                         var indOfPID = _readyQueue.q.indexOf(_PCB.PID);
                         _readyQueue.q.splice(indOfPID, 1);
                         console.log("BREAK: removed " + _PCB.PID + " from ready queue.")
@@ -403,7 +406,8 @@ var TSOS;
                                 console.log("BREAK: removed " + _PCB.PID + " from resident queue.")
                                 break;
                             }
-                        }
+                        }*/
+                        _PCB.active = 'Complete';
                         _StdOut.advanceLine();
                         _StdOut.putText('>');
                         break;
@@ -481,7 +485,6 @@ var TSOS;
                             // Translate string hex to an int
                             n = parseInt(hexn, 16);
                             var newloc = parseInt(_PCB.program_counter) + n;
-                            //document.getElementById("status").innerHTML = "From "+ _PCB.program_counter +"Jumping " + n + " to " + newloc;
                             if (newloc < limit){
                                 if (_PCB.segment > 0){
                                     //console.log("Before: " + newloc);
@@ -499,7 +502,6 @@ var TSOS;
                         } else{
                             _PCB.program_counter += 1;
                         }
-                        
                         
                         break;
                     case 'EE':
@@ -539,7 +541,7 @@ var TSOS;
                             _StdOut.putText("Invalid memory access, You can not leave your cube! Killing program.");
                             _StdOut.putText(">");
                             //this.isExecuting = false;
-                            
+                            _scheduler.killProcess(_PCB.PID);
                             this.isDone = true;
                             _StdOut.advanceLine();
                         }
@@ -594,7 +596,6 @@ var TSOS;
                                     if (inByte == '00'){
                                         terminated = true;
                                     }else{
-                                        document.getElementById("status").innerHTML = parseInt(inByte, 16);
                                         // Get the full string in characters
                                         var charCode = parseInt(inByte, 16);
                                         _StdOut.putText(String.fromCharCode(charCode));
@@ -606,7 +607,7 @@ var TSOS;
                             else{
                                 _StdOut.putText("Invalid memory access, You can not leave your cube! Killing program.");
                                 //this.isExecuting = false;
-                                
+                                _scheduler.killProcess(_PCB.PID);
                                 this.isDone = true;
                                 _StdOut.advanceLine();
                                 _StdOut.putText(">");
@@ -619,8 +620,8 @@ var TSOS;
                     default:
                         console.log('Not an op code:' + _Memory.bytes[_PCB.program_counter + base].toUpperCase())
                         //this.isExecuting = false;
-                        
                         _StdOut.putText(_Memory.bytes[_PCB.program_counter + base] + " is not a valid 6502 op code, don't try to break your cube. Execution killed");
+                        _scheduler.killProcess(_PCB.PID);
                         _Console.advanceLine();
                         _StdOut.putText(">");
                     
@@ -629,10 +630,10 @@ var TSOS;
                     isDone = true;
                     //this.isExecuting = false;
                     
-                    var currPIDLocInRQ = _readyQueue.q.indexOf(_PCB.PID);
-                    _readyQueue.q.splice(currPIDLocInRQ, 1);
-                    
+                    //var currPIDLocInRQ = _readyQueue.q.indexOf(_PCB.PID);
+                    //_readyQueue.q.splice(currPIDLocInRQ, 1);
                     _StdOut.putText("To many bytes in memory or no break at end of code. You can not leave your cube! Execution killed.");
+                    _scheduler.killProcess(_PCB.PID);
                     _Console.advanceLine();
                     _StdOut.putText(">");
                 }

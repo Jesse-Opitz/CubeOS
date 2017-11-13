@@ -34,10 +34,13 @@ var _segNumber = 0; // Number for which segment is next to put code in
 var _PID = 0; // Current PCB ID
 var _MaxProcesses = 3;
 
+var _isRun = false; // Boolean for single run (true) or runall (false)
+
 // For scheduling
 var _scheduler;
 var _readyQueue;
 var _progCounter = 0;
+var _quantum = 6;
 
 var _DefaultMemorySize = 768; // Sets system memory size
 var _OSclock = 0; // Page 23.

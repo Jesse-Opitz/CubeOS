@@ -418,7 +418,8 @@ var TSOS;
                     else{
                         console.log('PCB not found in resident queue.');
                     }
-                    
+                    _isRun = true;
+                    console.log('isRun set to ' + _isRun);
                     _CPU.cycle();
                     
                     // TODO: After a program finishes, erase it from the ready queue 
