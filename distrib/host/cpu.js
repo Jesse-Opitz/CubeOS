@@ -97,6 +97,17 @@ var TSOS;
                     _PCB.program_counter = _PCB.program_counter - 256;
                     console.log("Work around used, new counter: " + _PCB.program_counter);
                 }
+                if ((_PCB.program_counter + base) > _Memory.bytes.length){
+                    isDone = true;
+                    //this.isExecuting = false;
+                    
+                    //var currPIDLocInRQ = _readyQueue.q.indexOf(_PCB.PID);
+                    //_readyQueue.q.splice(currPIDLocInRQ, 1);
+                    _StdOut.putText("To many bytes in memory or no break at end of code. You can not leave your cube! Execution killed.");
+                    _scheduler.killProcess(_PCB.PID);
+                    _Console.advanceLine();
+                    _StdOut.putText(">");
+                }
                 
                 // Update IR
                 _PCB.IR = _Memory.bytes[_PCB.program_counter + base];
@@ -626,17 +637,7 @@ var TSOS;
                         _StdOut.putText(">");
                     
                 }
-                if ((_PCB.program_counter + base) > _Memory.bytes.length){
-                    isDone = true;
-                    //this.isExecuting = false;
-                    
-                    //var currPIDLocInRQ = _readyQueue.q.indexOf(_PCB.PID);
-                    //_readyQueue.q.splice(currPIDLocInRQ, 1);
-                    _StdOut.putText("To many bytes in memory or no break at end of code. You can not leave your cube! Execution killed.");
-                    _scheduler.killProcess(_PCB.PID);
-                    _Console.advanceLine();
-                    _StdOut.putText(">");
-                }
+                
             }
             
             _MemoryManager.updateMemTable(_Memory.bytes);
