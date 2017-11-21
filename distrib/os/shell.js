@@ -62,22 +62,28 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Set the status")
             this.commandList[this.commandList.length] = sc;
             // panic
-            sc = new TSOS.ShellCommand(this.shellPanic, "panic", "- Triggers blue screen of death.")
+            sc = new TSOS.ShellCommand(this.shellPanic, "panic", "- Triggers blue screen of death.");
             this.commandList[this.commandList.length] = sc;
             // ps
-            sc = new TSOS.ShellCommand(this.shellPs, "ps", "- Displays PIDs in ready queue.")
-            this.commandList[this.commandList.length] = sc;            
+            sc = new TSOS.ShellCommand(this.shellPs, "ps", "- Displays PIDs in ready queue.");
+            this.commandList[this.commandList.length] = sc;
+            // getschedule
+            sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", "- Displays schedule in use.");
+            this.commandList[this.commandList.length] = sc;
+            // setschedule <string>
+            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "- Sets schedule; Default is round-robin.");
+            this.commandList[this.commandList.length] = sc;
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the user program input.")
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the user program input.");
             this.commandList[this.commandList.length] = sc;
             // run
-            sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Runs a program in memory.")
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Runs a program in memory.");
             this.commandList[this.commandList.length] = sc;
             // runall
-            sc = new TSOS.ShellCommand(this.shellRunall, "runall", "- Runs all programs in ready queue.")
+            sc = new TSOS.ShellCommand(this.shellRunall, "runall", "- Runs all programs in ready queue.");
             this.commandList[this.commandList.length] = sc;
             // kill <pid> 
-            sc = new TSOS.ShellCommand(this.shellRunall, "kill", "<pid> - Kills a program that is running.")
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Kills a program that is running.");
             this.commandList[this.commandList.length] = sc;
             // clearmem
             sc = new TSOS.ShellCommand(this.shellClearmem, "clearmem", "- Clears memory");
@@ -476,6 +482,26 @@ var TSOS;
         };
         Shell.prototype.shellPs = function (args){
             _StdOut.putText('Ready PIDS: ' + _readyQueue.toString());
+        };
+        Shell.prototype.shellSetSchedule = function (args){
+            if (args.length < 1 || args.length > 1){
+                _StdOut.putText('Usage: setschedule <string> Please input a string'); 
+            }
+            else{
+                _scheduler.mode = args[0];
+                _StdOut.putText('Schedule set to ' + _scheduler.mode);
+            }
+            
+        };
+        Shell.prototype.shellGetSchedule = function (args){
+            if (args.length > 0){
+                _StdOut.putText('Usage: getschedule (Please do not enter parameters)'); 
+            }
+            else{
+                _scheduler.mode = args[0];
+                _StdOut.putText('Schedule set to ' + _scheduler.mode);
+            }
+            
         };
         return Shell;
     })();
