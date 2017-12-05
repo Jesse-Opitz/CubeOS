@@ -22,7 +22,7 @@ var TSOS;
         
         Scheduler.prototype.killProcess = function (pid){
             for (var i = 0; i < _readyQueue.getSize();i++){
-                if (_readyQueue.q[i].PID == pid){
+                if (_readyQueue.q[i] == pid){
                     //var indexOfReadyQ = i;
                     console.log("Killing ready queue pid: " + _readyQueue.q[i]);
                     _readyQueue.q.splice(i, 1);
@@ -87,7 +87,7 @@ var TSOS;
                 
                 this.killProcess(_PCB.PID);
                 
-                console.log("ready queue: " + _readyQueue.toString());
+                console.log("Ready queue: " + _readyQueue.toString());
                 // If there is no more programs left in the ready queue
                 if (_readyQueue.getSize() == 0){ // Stop executing
                     _CPU.isExecuting = false;

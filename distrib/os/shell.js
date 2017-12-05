@@ -498,7 +498,7 @@ var TSOS;
                 _StdOut.putText('Usage: getschedule (Please do not enter parameters)'); 
             }
             else{
-                _scheduler.mode = args[0];
+                console.log(args);
                 _StdOut.putText('Schedule set to ' + _scheduler.mode);
             }
             
