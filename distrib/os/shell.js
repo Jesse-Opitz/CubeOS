@@ -488,8 +488,17 @@ var TSOS;
                 _StdOut.putText('Usage: setschedule <string> Please input a string'); 
             }
             else{
-                _scheduler.mode = args[0];
-                _StdOut.putText('Schedule set to ' + _scheduler.mode);
+                // TODO: Change this to a list that is saved in globals
+                //  args[0] in scheduleModes
+                if (args[0] === 'rr' || args[0] === 'fcfs' || args[0] === 'priority'){
+                    _scheduler.mode = args[0];
+                    _StdOut.putText('Schedule set to ' + _scheduler.mode);                    
+                }
+                else{
+                    _StdOut.putText('Usage: setschedule <string> Please use a valid mode');
+                    _StdOut.advanceLine();
+                    _StdOut.putText('[rr, fcfs, priority]');
+                }
             }
             
         };

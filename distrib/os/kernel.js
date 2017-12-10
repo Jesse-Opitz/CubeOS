@@ -35,7 +35,17 @@ var TSOS;
             this.krnTrace("Loading the keyboard device driver.");
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
+            
             this.krnTrace(_krnKeyboardDriver.status);
+            
+            // Load the File System Device Driver
+            // Calling the driver mounts a single disk single disk by default
+            _hdd = new TSOS.hdd(7, 7, 7);
+            _availableHDD = new TSOS.Queue();
+            this.krnTrace("Loading the file system device driver.");
+            _krnfsDDDriver = new TSOS.fsDD(); // Construct file system device driver
+            
+            this.krnTrace(_krnfsDDDriver.status)
             //
             // ... more?
             //

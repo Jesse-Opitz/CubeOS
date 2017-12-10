@@ -18,8 +18,8 @@
    <script type="text/javascript" src="distrib/host/control.js"></script>
    <script type="text/javascript" src="distrib/host/devices.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
-   <!-- NEEDS TO BE DONE -->
    <script type="text/javascript" src="distrib/host/memory.js"></script>
+   <script type="text/javascript" src="distrib/host/hdd.js"></script>
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -27,6 +27,7 @@
    <script type="text/javascript" src="distrib/os/console.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
+   <script type="text/javascript" src="distrib/os/fsDD.js"></script>
    <script type="text/javascript" src="distrib/os/queue.js"></script>
    <script type="text/javascript" src="distrib/os/scheduler.js"></script>
    <script type="text/javascript" src="distrib/os/shell.js"></script>
@@ -275,6 +276,8 @@
    </div>
    <div id="divMemoryOutput" style="margin-left:10px;width:500px;height:500px;
    overflow-y:scroll;display:block;">
+   </div>
+   <div id="divhddOutput" style="margin-left:10px;overflow-y:scroll;display:block;">
    </div>
 </div>
 
