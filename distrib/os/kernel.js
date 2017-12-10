@@ -38,17 +38,15 @@ var TSOS;
             
             this.krnTrace(_krnKeyboardDriver.status);
             
-            // Load the File System Device Driver
-            // Calling the driver mounts a single disk single disk by default
-            _hdd = new TSOS.hdd(7, 7, 7);
-            _availableHDD = new TSOS.Queue();
+            // Load the File System Device Driver and Hard disk drives
             this.krnTrace("Loading the file system device driver.");
+            _availableHDD = new TSOS.Queue();
             _krnfsDDDriver = new TSOS.fsDD(); // Construct file system device driver
-            
             this.krnTrace(_krnfsDDDriver.status)
-            //
-            // ... more?
-            //
+            
+            _hdd = new TSOS.hdd(4, 8, 8); // Create a hard disk drive
+            _hdd.mount(); // Mounts hard disk drive
+            
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();

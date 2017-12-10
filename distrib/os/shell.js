@@ -73,6 +73,9 @@ var TSOS;
             // setschedule <string>
             sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "- Sets schedule; Default is round-robin.");
             this.commandList[this.commandList.length] = sc;
+            // quantum <int>
+            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "- Sets quantum; Default is 6.");
+            this.commandList[this.commandList.length] = sc;
             // load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the user program input.");
             this.commandList[this.commandList.length] = sc;
@@ -86,10 +89,13 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<pid> - Kills a program that is running.");
             this.commandList[this.commandList.length] = sc;
             // clearmem
-            sc = new TSOS.ShellCommand(this.shellClearmem, "clearmem", "- Clears memory");
+            sc = new TSOS.ShellCommand(this.shellClearmem, "clearmem", "- Clears memory.");
             this.commandList[this.commandList.length] = sc;
-            // quantum <int>
-            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "- Sets quantum; Default is 6.");
+            // format
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats hard drive.");
+            this.commandList[this.commandList.length] = sc;
+            // create <filename>
+            sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "- Creates a file on hard drive.");
             this.commandList[this.commandList.length] = sc;
             
             // ps  - list the running processes and their IDs
@@ -509,6 +515,33 @@ var TSOS;
             else{
                 console.log(args);
                 _StdOut.putText('Schedule set to ' + _scheduler.mode);
+            }
+            
+        };
+        Shell.prototype.shellFormat = function (args){
+            if (args.length > 0){
+                _StdOut.putText('Usage: format (Please do not enter parameters)'); 
+            }
+            else{
+                _krnfsDDDriver.krnfsDDFormat();
+                _StdOut.putText("Hard drive formatted.");
+                _StdOut.advanceLine();
+            }
+            
+        };
+        Shell.prototype.shellCreateFile = function (args){
+            if (args.length !== 1){
+                _StdOut.putText('Usage: format (Please do not enter parameters)'); 
+            }
+            else{
+                if (args[0].length < 62){
+                    wasCreated = _krnfsDDDriver.krnfsDDCreateFile(args[0]);
+                    if (wasCreated != false){
+                        _StdOut.putText('File ' + args[0] + ' created!');
+                    }
+                } else {
+                    _StdOut.putText("File name to long! Max length is 62 characters.");
+                }
             }
             
         };

@@ -60,6 +60,7 @@ var _KernelBuffers = null; // when clearly 'any' is not what we want. There is l
 var _hdd;
 var _currHDD = 0;
 var _availableHDD;
+var _blockSize = 64;
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;

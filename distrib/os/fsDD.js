@@ -23,51 +23,112 @@ var TSOS;
         __extends(fsDD, _super);
         function fsDD() {
             // Override the base method pointers.
-            _super.call(this, this.krnfsDDDriverEntry(), this.usingDisk());
+            _super.call(this, this.krnfsDDDriverEntry, this.krnUsingDisk);
         }
         fsDD.prototype.krnfsDDDriverEntry = function () {
-            console.log('here');
             // Initialization routine for this, the kernel-mode Keyboard Device Driver.
             this.status = "loaded";
-            console.log('Status: ' + this.status);
-            console.log('What is this: ' + this);
         };
-        fsDD.prototype.usingDisk = function () {
+        fsDD.prototype.krnfsDDUsingDisk = function () {
             console.log('Disk being used.');
         };
-        fsDD.prototype.mount = function () {
-            // Creates a new disk -- for simulating mounting a 
-            // new secondary storage device.
-            _currHDD += 1;
-            console.log('Mounted Disk: ' + _currHDD);
-            
-            _availableHDD.enqueue(_currHDD);
-            console.log('Available Disks: ' + _availableHDD.toString());
-            
-            this.format();
-            
-            _hdd.createTable();
-            
+        fsDD.prototype.krnfsDDGetAvailableDirSpace = function (){
+            // returns next free directory space
+            /*
+                * DIR:  0 0 1 to
+                * DIR:  0 7 7
+            */
+                
         };
-        fsDD.prototype.format = function () {
+        fsDD.prototype.krnfsDDGetAvailableFileSpace = function (){
+            // returns [track, sector, block] for next available
+            // file space.
+            /*
+                * FILE: 1 0 0 to
+                * FILE: 3 7 7
+            */
+            for (var t = 1; t < _hdd.tracks; t++){
+                for (var s = 0; s < _hdd.sectors; s++){
+                    for (var b = 0; b < _hdd.blocks; b++){
+                        data = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
+                        console.log("TSB:" + t + ":" + s + ":" + b + ": " + data[0]);
+                        if (data[0] == 0){
+                            console.log("found " + [t, s, b]);
+                            return [t, s, b];
+                        }
+                    }
+                }
+            }
+            
+            return false;
+        };
+        
+        fsDD.prototype.krnfsDDFormat = function () {
             // Sets disk to 0's 
-            console.log('Disk ' + _hdd.id + ' formatted.');
+            _Kernel.krnTrace('Formatting hard drive.');
+            var emptyBlock = [];
+            for (var l = 0; l < _blockSize; l++){
+                emptyBlock.push('00');
+            }
+            for (var t = 0; t < _hdd.tracks; t++){
+                for (var s = 0; s < _hdd.sectors; s++){
+                    for (var b = 0; b < _hdd.blocks; b++){
+                        this.krnfsDDWriteFile(t, s, b, emptyBlock);
+                    }
+                }
+            }
+            console.log('Disk ' + _hdd.id + ' formatted: ' + _hdd.formatted);
+            _hdd.formatted = true;
+            _Kernel.krnTrace('Hard drive formatted');
         };
-        fsDD.prototype.createFile = function (file_name) {
+        fsDD.prototype.krnfsDDCreateFile = function (file_name) {
             // Creates a file on disk
-            console.log('Creating file ' + file_name + ' on disk ' + _hdd.id);
+            var tsb = this.krnfsDDGetAvailableFileSpace();
+            if (tsb != false){
+                var t = tsb[0];
+                var s = tsb[1];
+                var b = tsb[2];
+            } else{
+                _StdOut.putText("Your cube is full.");
+                return false;
+            }
+            
+            
+            data = sessionStorage.getItem('TSB:' + t + ":" + s + ":" + b);
+            console.log(data);
+            if (file_name.length < _blockSize-2){
+                _Kernel.krnTrace("Creating file " + file_name + " in TSB:" + t + ":" + s + ":" + b);
+                console.log("Creating file " + file_name + " in TSB:" + t + ":" + s + ":" + b);
+                data[0] = "01";
+                console.log(data[0]);
+                for (var i = 0; i < file_name.length; i++){
+                    charCode = file_name.charCodeAt(i);
+                    data[i+1] = charCode;
+                }
+                
+                document.getElementById(t + ":" + s + ":" + b).innerHTML = data;
+            } else{
+                _StdOut.putText("File name to long! Max length is 62 characters.");
+                return false;
+            }
+            
         };
-        fsDD.prototype.readFile = function (file_name) {
+        fsDD.prototype.krnfsDDReadFile = function (file_name) {
             // Reads a file on disk
             console.log('Reading file ' + file_name + ' on disk ' + _hdd.id);
         };
-        fsDD.prototype.deleteFile = function (file_name) {
+        fsDD.prototype.krnfsDDDeleteFile = function (file_name) {
             // Deletes a file on disk
             console.log('Deleting file ' + file_name + ' on disk ' + _hdd.id);
         };
-        fsDD.prototype.editFile = function ( file_name, data) {
+        fsDD.prototype.krnfsDDWriteFile = function (t, s, b, data) {
             // Edits a file on disk
-            console.log('Editing file ' + file_name + ' on disk ' + _hdd.id);
+            //console.log('Writing ' + data + ' to tsb ' + t + ':' + s + ':' + b);
+            if (t < _hdd.tracks && s < _hdd.sectors && b < _hdd.blocks){
+                sessionStorage.setItem("TSB:" + t + ":" + s + ":" + b, data);
+            } else{
+                console.log("Stay in your cube! " + t + ":" + s + ":" + b + " is not in your cube!");
+            }
         };
         return fsDD;
     })(TSOS.DeviceDriver);
