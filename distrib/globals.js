@@ -61,6 +61,11 @@ var _hdd;
 var _currHDD = 0;
 var _availableHDD;
 var _blockSize = 64;
+var _fileNameSize = 60;
+var _emptyBlock = [];
+for (var l = 0; l < _blockSize; l++){
+    _emptyBlock.push('00');
+}
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;

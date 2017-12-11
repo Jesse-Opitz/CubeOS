@@ -39,7 +39,69 @@ var TSOS;
             console.log('table created');
             
         };
-        
+        hdd.prototype.read = function (file_name) {
+            // Reads a file on disk
+            console.log('Reading file ' + file_name + ' on disk ' + this.id);
+        };
+        hdd.prototype.write = function (t, s, b, data) {
+            // Edits a file on disk
+            //console.log('Writing ' + data + ' to tsb ' + t + ':' + s + ':' + b);
+            if (t < this.tracks && s < this.sectors && b < this.blocks){
+                sessionStorage.setItem("TSB:" + t + ":" + s + ":" + b, data);
+                console.log("New Data: " + sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
+            } else{
+                console.log("Stay in your cube! " + t + ":" + s + ":" + b + " is not in your cube!");
+            }
+        };
+        hdd.prototype.checkBit = function (t, s, b){
+            // returns true if block on hdd is free
+            // returns false if not free
+            var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
+            
+            var data = JSON.parse(uncleanData);
+            
+            if (data[0] === "00"){
+                return true;
+            }
+            console.log('false');
+            return false;
+        };
+        hdd.prototype.flipBit = function (t, s, b){
+            // Changes in-use bit to 01 if it's 00 or
+            // 00 if it's 01
+            var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
+            
+            var data = JSON.parse(uncleanData);
+            
+            if (data[0] === "00"){
+                data[0] = "01";
+                console.log('Bit flipped to 01 in TSB: ' + t + ":" + s + ":" + b);
+            } else{
+                data[0] = "00";
+                console.log('Bit flipped to 00 in TSB: ' + t + ":" + s + ":" + b);
+            }
+            sessionStorage.setItem("TSB:" + t + ":" + s + ":" + b, JSON.stringify(data));
+        };
+        hdd.prototype.zeroBlock = function (t, s, b){
+            // Enables use of zfod
+            _hdd.write(t, s, b, JSON.stringify(_emptyBlock));
+            
+        };
+        hdd.prototype.updateHDDTable = function (){
+            // Updates the gui for hdd
+            for (var t = 0; t < _hdd.tracks; t++){
+                for (var s = 0; s < _hdd.sectors; s++){
+                    for (var b = 0; b < _hdd.blocks; b++){
+                        document.getElementById(t + ":" + s + ":" + b).innerHTML = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
+                    }
+                }
+            }
+        };
+        hdd.prototype.findFile = function (file_name){
+            // Simulates heads spinning to find the tsb that contains
+            // a file.
+            
+        };
         // Creates HTML HDD table dynamically
         // TODO: Edit this for creation of multiple tables
         // for multiple HDD?
@@ -81,7 +143,7 @@ var TSOS;
                         // the end of the table row
                         var cell = document.createElement("td");
                         var cellText = document.createTextNode(sessionStorage.getItem("TSB:" + i + ":" + j + ":" + k));
-                        cell.setAttribute("id", + i + ":" + j + ":" + k);
+                        cell.setAttribute("id", i + ":" + j + ":" + k);
                         cell.setAttribute("style", "font-size:10pt");
                         cell.appendChild(cellText);
                         row.appendChild(cell);

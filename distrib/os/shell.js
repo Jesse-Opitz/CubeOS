@@ -94,8 +94,8 @@ var TSOS;
             // format
             sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats hard drive.");
             this.commandList[this.commandList.length] = sc;
-            // create <filename>
-            sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "- Creates a file on hard drive.");
+            // create <file_name>
+            sc = new TSOS.ShellCommand(this.shellCreateFile, "create <file_name>", "- Creates a file on hard drive.");
             this.commandList[this.commandList.length] = sc;
             
             // ps  - list the running processes and their IDs
@@ -524,6 +524,7 @@ var TSOS;
             }
             else{
                 _krnfsDDDriver.krnfsDDFormat();
+                _hdd.updateHDDTable();
                 _StdOut.putText("Hard drive formatted.");
                 _StdOut.advanceLine();
             }
@@ -531,16 +532,16 @@ var TSOS;
         };
         Shell.prototype.shellCreateFile = function (args){
             if (args.length !== 1){
-                _StdOut.putText('Usage: format (Please do not enter parameters)'); 
+                _StdOut.putText('Usage: create <string>'); 
             }
             else{
-                if (args[0].length < 62){
+                if (args[0].length <= _fileNameSize){
                     wasCreated = _krnfsDDDriver.krnfsDDCreateFile(args[0]);
                     if (wasCreated != false){
                         _StdOut.putText('File ' + args[0] + ' created!');
                     }
                 } else {
-                    _StdOut.putText("File name to long! Max length is 62 characters.");
+                    _StdOut.putText("File name to long for this cube! Max length is 62 characters.");
                 }
             }
             
