@@ -103,7 +103,36 @@ var TSOS;
         };
         fsDD.prototype.krnfsDDDeleteFile = function (file_name) {
             // Deletes a file on disk
-            console.log('Deleting file ' + file_name + ' on disk ' + _hdd.id);
+            _Kernel.krnTrace("Deleting file " + file_name);
+            console.log("Deleting file: " + file_name);
+            //console.log("Deleting file " + file_name);
+            var originTSB = _hdd.findFile(file_name);
+            console.log("Origin TSB: " + originTSB);
+            if (originTSB != false){
+                var originT = originTSB[0];
+                var originS = originTSB[1];
+                var originB = originTSB[2];
+                
+                var nextChain = _hdd.getChainBit(originT, originS, originB);
+                
+                _hdd.zeroBlock(originT, originS, originB);
+                
+                while( nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
+                    var t = nextChain[0];
+                    var s = nextChain[1];
+                    var b = nextChain[2];
+                    
+                    nextChain = _hdd.getChainBit(parseInt(t), parseInt(s), parseInt(b));
+                    //console.log("Next Chain: " + nextChain);
+                    _hdd.zeroBlock(parseInt(t), parseInt(s), parseInt(b));
+                    console.log("Deleting: " + parseInt(t) + ":" + parseInt(s) + ":" + parseInt(b));
+                }
+                _hdd.updateHDDTable();
+                console.log(file_name + " successfully deleted.");
+                _Kernel.krnTrace(file_name + " successfully deleted.");
+            } else{
+                return false;
+            }
         };
         fsDD.prototype.krnfsDDListFiles = function () {
             // Lists all files on disk

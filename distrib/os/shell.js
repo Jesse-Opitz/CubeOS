@@ -577,7 +577,6 @@ var TSOS;
                     _StdOut.putText("File name to long for this cube! Max length is " + _fileNameSize + " characters.");
                 }
             }
-            
         };
         Shell.prototype.shellRead = function (args){
             console.log("Not done yet");
@@ -610,19 +609,21 @@ var TSOS;
             */
         };
         Shell.prototype.shellDelete = function (args){
-            console.log("Not done yet");
-            /*
             if (args.length !== 1){
                 _StdOut.putText('Usage: read <file_name>'); 
             }
             else{
                 if (args[0].length <= _fileNameSize){
-                    _hdd.read(args[0]);
+                    isDeleted = _krnfsDDDriver.krnfsDDDeleteFile(args[0]);
+                    if(!isDeleted){
+                        _StdOut.putText("File deleted from cube!");
+                    } else{
+                        _StdOut.putText("File not found.") // Must be a pyramid.
+                    }
                 } else {
                     _StdOut.putText("Invalid file name!");
                 }
             }
-            */
         };
         return Shell;
     })();

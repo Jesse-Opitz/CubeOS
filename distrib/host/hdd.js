@@ -109,16 +109,19 @@ var TSOS;
             this.write(t, s, b, data);
             
             this.flipUseBit(nextT, nextS, nextB);
+            
         };
         hdd.prototype.getChainBit = function (t, s, b){
             // Returns next location from chain bits of a block
             var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
-            
+            //console.log("Unclean: " + uncleanData);
+            console.log("Chain bit tsb: " + t + ":" + s + ":" + b);
             var data = JSON.parse(uncleanData);
+            //console.log("Data: " + data);
             
-            data[_blockSize-3] = "0" + nextT;
-            data[_blockSize-2] = "0" + nextS;
-            data[_blockSize-1] = "0" + nextB;
+            var nextT = data[_blockSize-3];
+            var nextS = data[_blockSize-2];
+            var nextB = data[_blockSize-1];
             
             return [nextT, nextS, nextB];
         };
@@ -145,8 +148,7 @@ var TSOS;
                 for (var s = 0; s < _hdd.sectors; s++){
                     for (var b = 0; b < _hdd.blocks; b++){
                         if (b !== 0 || s !== 0){
-                            console.log("Checking: " + t + ":" + s + ":" + b)
-                        
+                            //console.log("Checking: " + t + ":" + s + ":" + b)
                             if(!this.checkUseBit(t, s, b)){
                                 var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
                 
@@ -159,8 +161,10 @@ var TSOS;
                                         diskFN += String.fromCharCode(data[i+2]);
                                     }
                                 }
+                                //console.log("DiskFN: " + diskFN);
+                                //console.log("File name: " + file_name);
                                 if (file_name === diskFN){
-                                    console.log('Found file: ' + diskFN);
+                                    //console.log('Found file: ' + diskFN);
                                     return [t, s, b];
                                 }
                             }
