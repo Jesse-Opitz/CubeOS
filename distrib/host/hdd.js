@@ -42,6 +42,13 @@ var TSOS;
         hdd.prototype.read = function (file_name) {
             // Reads a file on disk
             console.log('Reading file ' + file_name + ' on disk ' + this.id);
+            
+            fileFound = this.findFile(file_name);
+            if (fileFound){
+                console.log("File Found!");
+            } else {
+                console.log("File not found!");
+            }
         };
         hdd.prototype.write = function (t, s, b, data) {
             // Edits a file on disk
@@ -63,7 +70,7 @@ var TSOS;
             if (data[0] === "00"){
                 return true;
             }
-            console.log('false');
+            
             return false;
         };
         hdd.prototype.flipBit = function (t, s, b){
@@ -100,6 +107,36 @@ var TSOS;
         hdd.prototype.findFile = function (file_name){
             // Simulates heads spinning to find the tsb that contains
             // a file.
+            // Returns [t, s, b]
+            for (var t = 0; t < _hdd.tracks; t++){
+                for (var s = 0; s < _hdd.sectors; s++){
+                    for (var b = 0; b < _hdd.blocks; b++){
+                        if (b !== 0 || s !== 0){
+                            console.log("Checking: " + t + ":" + s + ":" + b)
+                        
+                            if(!this.checkBit(t, s, b)){
+                                var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
+                
+                                var data = JSON.parse(uncleanData);
+                                
+                                var diskFN = '';
+                                
+                                for (var i = 0; i <= _fileNameSize; i++){
+                                    if (data[i+2] != "00"){
+                                        diskFN += String.fromCharCode(data[i+2]);
+                                    }
+                                }
+                                if (file_name === diskFN){
+                                    console.log('Found file: ' + diskFN);
+                                    return [t, s, b];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return false;
             
         };
         // Creates HTML HDD table dynamically

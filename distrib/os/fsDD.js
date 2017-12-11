@@ -45,7 +45,7 @@ var TSOS;
             for (var t = 0; t < _hdd.tracks; t++){
                 for (var s = 0; s < _hdd.sectors; s++){
                     for (var b = 0; b < _hdd.blocks; b++){
-                        _hdd.write(t, s, b, JSON.stringify(_emptyBlock));
+                        _hdd.zeroBlock(t, s, b);
                     }
                 }
             }
@@ -104,9 +104,6 @@ var TSOS;
                 _StdOut.putText("Your directory cube is full.");
                 return false;
             }
-            //var t = 0;
-            //var s = 0;
-            //var b = 1;
             console.log("Looking at " + t + ":" + s + ":" + b);
             _hdd.flipBit(t, s, b);
             data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));

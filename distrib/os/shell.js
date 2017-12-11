@@ -95,7 +95,10 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats hard drive.");
             this.commandList[this.commandList.length] = sc;
             // create <file_name>
-            sc = new TSOS.ShellCommand(this.shellCreateFile, "create <file_name>", "- Creates a file on hard drive.");
+            sc = new TSOS.ShellCommand(this.shellCreate, "create", "<file_name> - Creates a file on hard drive.");
+            this.commandList[this.commandList.length] = sc;
+            // read <file_name>
+            sc = new TSOS.ShellCommand(this.shellRead, "read", "<file_name> - Reads a file on hard drive.");
             this.commandList[this.commandList.length] = sc;
             
             // ps  - list the running processes and their IDs
@@ -530,9 +533,9 @@ var TSOS;
             }
             
         };
-        Shell.prototype.shellCreateFile = function (args){
+        Shell.prototype.shellCreate = function (args){
             if (args.length !== 1){
-                _StdOut.putText('Usage: create <string>'); 
+                _StdOut.putText('Usage: create <file_name>'); 
             }
             else{
                 if (args[0].length <= _fileNameSize){
@@ -541,7 +544,20 @@ var TSOS;
                         _StdOut.putText('File ' + args[0] + ' created!');
                     }
                 } else {
-                    _StdOut.putText("File name to long for this cube! Max length is 62 characters.");
+                    _StdOut.putText("File name to long for this cube! Max length is " + _fileNameSize + " characters.");
+                }
+            }
+            
+        };
+        Shell.prototype.shellRead = function (args){
+            if (args.length !== 1){
+                _StdOut.putText('Usage: read <file_name>'); 
+            }
+            else{
+                if (args[0].length <= _fileNameSize){
+                    _hdd.read(args[0]);
+                } else {
+                    _StdOut.putText("Invalid file name!");
                 }
             }
             
