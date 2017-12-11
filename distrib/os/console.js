@@ -149,14 +149,12 @@ var TSOS;
             if (this.buffer.length > 0) {
                 
                 var pattern = new RegExp("^" + this.buffer);
-                var commands = ['ver', 'help', 'shutdown', 'cls', 'man', 
-                                'trace', 'rot13', 'prompt', 'date', 'whereami', 
-                                'whoareyou', 'status', 'panic', 'load'];
+                var commands = _OsShell.commandList;
                 var i = 0;
                 var viable = [];
                 while (i < commands.length) {
-                    if (pattern.test(commands[i])){
-                        viable.push(commands[i]);
+                    if (pattern.test(commands[i].command)){
+                        viable.push(commands[i].command);
                     }
                     i++;
                 }

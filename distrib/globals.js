@@ -61,7 +61,7 @@ var _hdd;
 var _currHDD = 0;
 var _availableHDD;
 var _blockSize = 64;
-var _fileNameSize = 60;
+var _fileNameSize = 55;
 var _emptyBlock = [];
 for (var l = 0; l < _blockSize; l++){
     _emptyBlock.push('00');

@@ -31,8 +31,14 @@ var TSOS;
         };
         // TODO: Use interrupts with this function...
         fsDD.prototype.krnfsDDUsingDisk = function (args) {
+            // Debating if I should use this...
+            // May be best practice, but time is of the essence
+            // Takes in a list of args
+            // 0 - Operation to be done
+            // 1 - blank or file_name
+            
             console.log('Disk being used.');
-            switch(proc){
+            switch(args[0]){
                 case 'krnfsDDFormat':
                     this.krnfsDDFormat();
                     break;
@@ -54,48 +60,10 @@ var TSOS;
             _Kernel.krnTrace('Hard drive formatted');
             
         };
-        fsDD.prototype.krnfsDDGetAvailableDirSpace = function (){
-            // returns next free directory space
-            /*
-                * DIR:  0 0 1 to
-                * DIR:  0 7 7
-            */
-            var t = 0;
-            for (var s = 0; s < _hdd.sectors; s++){
-                for (var b = 0; b < _hdd.blocks; b++){
-                    console.log("S: " + s + " B: " + b);
-                    if (b !== 0 || s !== 0){
-                        if(_hdd.checkBit(t, s, b)){
-                            return [t, s, b];
-                        }
-                    }
-                }
-            }
-            return false;
-        };
-        fsDD.prototype.krnfsDDGetAvailableFileSpace = function (){
-            // returns [track, sector, block] for next available
-            // file space.
-            /*
-                * FILE: 1 0 0 to
-                * FILE: 3 7 7
-            */
-            
-            for (var t = 1; t < _hdd.tracks; t++){
-                for (var s = 0; s < _hdd.sectors; s++){
-                    for (var b = 0; b < _hdd.blocks; b++){
-                        if(_hdd.checkBit(t, s, b)){
-                            return [t, s, b];
-                        }
-                    }
-                }
-            }
-            
-            return false;
-        };
+        
         fsDD.prototype.krnfsDDCreateFile = function (file_name) {
             // Creates a file on disk
-            var tsb = this.krnfsDDGetAvailableDirSpace();
+            var tsb = _hdd.getAvailableDirSpace();
             if (tsb != false){
                 var t = tsb[0];
                 var s = tsb[1];
@@ -104,11 +72,10 @@ var TSOS;
                 _StdOut.putText("Your directory cube is full.");
                 return false;
             }
-            console.log("Looking at " + t + ":" + s + ":" + b);
-            _hdd.flipBit(t, s, b);
+            
+            _hdd.flipUseBit(t, s, b);
             data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
-            console.log('HERE' + data[0]);
-            //console.log(data);
+
             if (file_name.length <= _fileNameSize){
                 _Kernel.krnTrace("Creating file " + file_name + " in TSB:" + t + ":" + s + ":" + b);
                 console.log("Creating file " + file_name + " in TSB:" + t + ":" + s + ":" + b);
@@ -117,10 +84,17 @@ var TSOS;
                     charCode = file_name.charCodeAt(i);
                     data[i+2] = charCode;
                 }
-                console.log(data);
-                sessionStorage.setItem("TSB:" + t + ":" + s + ":" + b, JSON.stringify(data));
+                
+                // Write name in dir section
+                _hdd.write(t, s, b, data);
+                
+                // Set chaining bit
+                _hdd.setChainBit(t, s, b);
+                
+                console.log("New Data in " + t + ":" + s + ":" + b + ": " + sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
                 
                 _hdd.updateHDDTable();
+                _Kernel.krnTrace("File " + file_name + " created in TSB:" + t + ":" + s + ":" + b);
             } else{
                 _StdOut.putText("File name to long! Max length is " + _fileNameSize + " characters.");
                 return false;
@@ -130,6 +104,42 @@ var TSOS;
         fsDD.prototype.krnfsDDDeleteFile = function (file_name) {
             // Deletes a file on disk
             console.log('Deleting file ' + file_name + ' on disk ' + _hdd.id);
+        };
+        fsDD.prototype.krnfsDDListFiles = function () {
+            // Lists all files on disk
+            console.log("Listing files...");
+            /*
+                * DIR:  0 0 1 to
+                * DIR:  0 7 7
+            */
+            var file_list = [];
+            var t = 0;
+            for (var s = 0; s < _hdd.sectors; s++){
+                for (var b = 0; b < _hdd.blocks; b++){
+                    if (b !== 0 || s !== 0){
+                        if (!_hdd.checkUseBit(t, s, b)){
+                            console.log("TSB:" + t + ":" + s + ":" + b);
+                            var fn = '';
+                            var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
+            
+                            var data = JSON.parse(uncleanData);
+                            console.log(data[2]);
+                            // Start at 2 to skip use-bit and extra bit
+                            var i = 2;
+                            while (i < _fileNameSize){
+                                if(data[i] !== "00"){
+                                    fn += String.fromCharCode(data[i]);
+                                } else{
+                                    break;
+                                }
+                                i++;
+                            }
+                            file_list.push(fn);
+                        }
+                    }
+                }
+            }
+            return file_list;
         };
         
         return fsDD;

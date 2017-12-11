@@ -94,11 +94,20 @@ var TSOS;
             // format
             sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats hard drive.");
             this.commandList[this.commandList.length] = sc;
+            // ls
+            sc = new TSOS.ShellCommand(this.shellLs, "ls", "- Lists all files on hard drive.");
+            this.commandList[this.commandList.length] = sc;
             // create <file_name>
             sc = new TSOS.ShellCommand(this.shellCreate, "create", "<file_name> - Creates a file on hard drive.");
             this.commandList[this.commandList.length] = sc;
             // read <file_name>
             sc = new TSOS.ShellCommand(this.shellRead, "read", "<file_name> - Reads a file on hard drive.");
+            this.commandList[this.commandList.length] = sc;
+            // write <file_name> "data"
+            sc = new TSOS.ShellCommand(this.shellWrite, "write", '<file_name> "data"- Writes to a file on hard drive.');
+            this.commandList[this.commandList.length] = sc;
+            // delete <file_name>
+            sc = new TSOS.ShellCommand(this.shellDelete, "delete", '<file_name> - Writes to a file on hard drive.');
             this.commandList[this.commandList.length] = sc;
             
             // ps  - list the running processes and their IDs
@@ -533,6 +542,27 @@ var TSOS;
             }
             
         };
+        Shell.prototype.shellLs = function (args){
+            if (args.length > 0){
+                _StdOut.putText('Usage: ls'); 
+            }
+            else{
+                var file_list = _krnfsDDDriver.krnfsDDListFiles();
+                
+                if (file_list.length > 0){
+                    var j = 0;
+                    console.log(file_list.length);
+                    while (j < file_list.length){
+                        _StdOut.putText('- ' + file_list[j])
+                        _StdOut.advanceLine()
+                        _StdOut.clearLine()
+                        j++;
+                    }
+                    
+                }
+            }
+            
+        };
         Shell.prototype.shellCreate = function (args){
             if (args.length !== 1){
                 _StdOut.putText('Usage: create <file_name>'); 
@@ -550,6 +580,8 @@ var TSOS;
             
         };
         Shell.prototype.shellRead = function (args){
+            console.log("Not done yet");
+            /*
             if (args.length !== 1){
                 _StdOut.putText('Usage: read <file_name>'); 
             }
@@ -560,7 +592,37 @@ var TSOS;
                     _StdOut.putText("Invalid file name!");
                 }
             }
-            
+            */
+        };
+        Shell.prototype.shellWrite = function (args){
+            console.log("Not done yet");
+            /*
+            if (args.length !== 1){
+                _StdOut.putText('Usage: read <file_name>'); 
+            }
+            else{
+                if (args[0].length <= _fileNameSize){
+                    _hdd.read(args[0]);
+                } else {
+                    _StdOut.putText("Invalid file name!");
+                }
+            }
+            */
+        };
+        Shell.prototype.shellDelete = function (args){
+            console.log("Not done yet");
+            /*
+            if (args.length !== 1){
+                _StdOut.putText('Usage: read <file_name>'); 
+            }
+            else{
+                if (args[0].length <= _fileNameSize){
+                    _hdd.read(args[0]);
+                } else {
+                    _StdOut.putText("Invalid file name!");
+                }
+            }
+            */
         };
         return Shell;
     })();
