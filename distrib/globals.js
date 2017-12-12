@@ -59,9 +59,9 @@ var _KernelBuffers = null; // when clearly 'any' is not what we want. There is l
 // File system 
 var _hdd;
 var _currHDD = 0;
-var _availableHDD;
-var _blockSize = 64;
-var _fileNameSize = 55;
+var _availableHDD; // TODO: For possible future enhancements
+var _blockSize = 64; // TODO: Should be a attribute of hdd
+var _fileNameSize = 60; // TODO: Should be a attribute of hdd
 var _emptyBlock = [];
 for (var l = 0; l < _blockSize; l++){
     _emptyBlock.push('00');

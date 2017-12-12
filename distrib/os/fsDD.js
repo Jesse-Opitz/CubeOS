@@ -55,6 +55,7 @@ var TSOS;
                     }
                 }
             }
+            
             _hdd.formatted = true;
             console.log('Disk ' + _hdd.id + ' formatted: ' + _hdd.formatted);
             _Kernel.krnTrace('Hard drive formatted');
@@ -77,12 +78,12 @@ var TSOS;
             data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
 
             if (file_name.length <= _fileNameSize){
-                _Kernel.krnTrace("Creating file " + file_name + " in TSB:" + t + ":" + s + ":" + b);
-                console.log("Creating file " + file_name + " in TSB:" + t + ":" + s + ":" + b);
+                _Kernel.krnTrace("Creating file " + file_name + ".");
                 
                 for (var i = 0; i < file_name.length; i++){
                     charCode = file_name.charCodeAt(i);
-                    data[i+2] = charCode;
+                    // Writes charcode in hex
+                    data[i+1] = charCode.toString(16);
                 }
                 
                 // Write name in dir section
@@ -94,7 +95,7 @@ var TSOS;
                 console.log("New Data in " + t + ":" + s + ":" + b + ": " + sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
                 
                 _hdd.updateHDDTable();
-                _Kernel.krnTrace("File " + file_name + " created in TSB:" + t + ":" + s + ":" + b);
+                _Kernel.krnTrace("File " + file_name + " created.");
             } else{
                 _StdOut.putText("File name to long! Max length is " + _fileNameSize + " characters.");
                 return false;
@@ -117,22 +118,168 @@ var TSOS;
                 
                 _hdd.zeroBlock(originT, originS, originB);
                 
+                while(nextChain[0] !== "00" && nextChain[1] !== "00" && nextChain[2] !== "00") { // nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
+                    var t = nextChain[0];
+                    var s = nextChain[1];
+                    var b = nextChain[2];
+                    
+                    nextChain = _hdd.getChainBit(parseInt(t), parseInt(s), parseInt(b));
+                    
+                    _hdd.zeroBlock(parseInt(t), parseInt(s), parseInt(b));
+                    console.log("Deleting: " + parseInt(t) + ":" + parseInt(s) + ":" + parseInt(b));
+                }
+                _hdd.updateHDDTable();
+                console.log(file_name + " successfully deleted!");
+                _Kernel.krnTrace(file_name + " successfully deleted!");
+            } else{
+                _Kernel.krnTrace(file_name + " not successfully deleted!");
+                return false;
+            }
+        };
+        fsDD.prototype.krnfsDDReadFile = function (file_name) {
+            // Edits a file on the disk
+            // TODO: Implement this..
+            _Kernel.krnTrace("Reading file " + file_name + ".");
+            console.log("Reading file: " + file_name);
+            
+            console.log("**NOT DONE**");
+            
+            console.log("Done Reading.");
+            _Kernel.krnTrace("Reading file " + file_name + " successful.");
+        };
+        fsDD.prototype.krnfsDDEditFile = function (file_name, data) {
+            // Edits a file on the disk
+            _Kernel.krnTrace("Editing file " + file_name + ".");
+            console.log("Editing file: " + file_name);
+            
+            //var currData;
+
+            /*
+                var p = 0; // Pointer for character in data
+                var i = 0; // Tracks bytes used in block
+                while data.length !== 0{ // While there's still data
+                    if i <= _fileNameSize{ // While there is still space in the block
+                        data[p] translate it to charcode, then hex
+                        
+                        write data to block
+                        
+                        data[i] = data[i].splice(0, i) + data[i].splice(i+1);
+                        
+                        i++; // Increment block tracker
+                        p++; // Increment data char pointer
+                    } else {
+                        if chainBit != 00 00 00{ // If there's no already allocated blocks for data
+                            setChainBit(t, s, b);
+                            i = 0;
+                        } else {
+                            getChainBit(t, s, b);
+                            
+                            // set new t, s, b
+                            
+                            i = 0;
+                        }
+                    }
+                }
+                
+                if chainBit !== 00 00 00 { // If there's more linked blocks
+                    getChainBit // Get the next linked block
+                    // Delete remaining blocks
+                    
+                    var nextChain = _hdd.getChainBit(t, s, b);
+                    
+                    _hdd.zeroBlock(t, s, b);
+                    
+                    while( nextChain == 00 00 00){
+                        var t = nextChain[0];
+                        var s = nextChain[1];
+                        var b = nextChain[2];
+                        
+                        nextChain = _hdd.getChainBit(parseInt(t), parseInt(s), parseInt(b));
+                        
+                        _hdd.zeroBlock(parseInt(t), parseInt(s), parseInt(b));
+                        console.log("Deleting: " + parseInt(t) + ":" + parseInt(s) + ":" + parseInt(b));
+                    }
+                }
+                
+                update hdd table
+            */
+            
+            /* ----------------------------------------------TOP ---------------------------------------------------------------------------*/
+            // Retrieves TSB of directory
+            var originTSB = _hdd.findFile(file_name);
+            
+            var t = originTSB[0];
+            var s = originTSB[1];
+            var b = originTSB[2];
+
+            var newBlock = _emptyBlock;//JSON.parse(sessionStorage.getItem("TSB:" + originT + ":" + originS + ":" + originB));
+            
+            var p = 0; // Pointer for character in data
+            var i = 0; // Tracks bytes used in block
+            var char = '';
+            var nextChainBit;
+            while (data.length > 0){ // While there's still data
+                if (i <= _fileNameSize){ // While there is still space in the block
+                    // data[p] translate it to charcode, then hex
+                    charCode = data.charCodeAt(p);
+                    // Writes charcode in hex
+                    hexCode = charCode.toString(16);
+                    
+                    //write data to the new block
+                    newBlock[i+1] = hexCode;
+                    
+                    // Delete char from data
+                    data = data[p].splice(0, p) + data[p].splice(p+1); 
+                    
+                    // Save the new data in block
+                    //newBlock[i+1] = //JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
+                    
+                    i++; // Increment block tracker
+                    p++; // Increment data char pointer
+                } else { // If there's no room in block, but still data
+                    nextChainBit = _hdd.getChainBit(t, s, b)
+                    if (nextChainBit[0] !== "00" && nextChainBit[1] !== "00" && nextChainBit[2] !== "00"){
+                        
+                    }
+                    /*
+                    if chainBit != 00 00 00{ // If there's no already allocated blocks for data
+                        setChainBit(t, s, b);
+                        i = 0;
+                    } else {
+                        getChainBit(t, s, b);
+                        
+                        // set new t, s, b
+                        
+                        i = 0;
+                    }
+                    */
+                }
+            }
+            
+            /*if chainBit !== 00 00 00 { // If there's more linked blocks
+                getChainBit // Get the next linked block
+                // Delete remaining blocks
+                
+                var nextChain = _hdd.getChainBit(t, s, b);
+                
+                _hdd.zeroBlock(t, s, b);
+                
                 while( nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
                     var t = nextChain[0];
                     var s = nextChain[1];
                     var b = nextChain[2];
                     
                     nextChain = _hdd.getChainBit(parseInt(t), parseInt(s), parseInt(b));
-                    //console.log("Next Chain: " + nextChain);
+                    
                     _hdd.zeroBlock(parseInt(t), parseInt(s), parseInt(b));
                     console.log("Deleting: " + parseInt(t) + ":" + parseInt(s) + ":" + parseInt(b));
                 }
-                _hdd.updateHDDTable();
-                console.log(file_name + " successfully deleted.");
-                _Kernel.krnTrace(file_name + " successfully deleted.");
-            } else{
-                return false;
-            }
+            }*/
+            
+            _hdd.updateHDDTable(); // Update hdd table
+            
+            console.log("Editing file " + file_name + " successful.");
+            _Kernel.krnTrace("Editing file " + file_name + " successful.");
         };
         fsDD.prototype.krnfsDDListFiles = function () {
             // Lists all files on disk

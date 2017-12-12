@@ -52,7 +52,7 @@ var TSOS;
             }
         };
         hdd.prototype.write = function (t, s, b, data) {
-            // Edits a file on disk
+            // Writes to a single block on the disk
             //console.log('Writing ' + data + ' to tsb ' + t + ':' + s + ':' + b);
             if (t < this.tracks && s < this.sectors && b < this.blocks){
                 sessionStorage.setItem("TSB:" + t + ":" + s + ":" + b, JSON.stringify(data));
@@ -148,23 +148,26 @@ var TSOS;
                 for (var s = 0; s < _hdd.sectors; s++){
                     for (var b = 0; b < _hdd.blocks; b++){
                         if (b !== 0 || s !== 0){
-                            //console.log("Checking: " + t + ":" + s + ":" + b)
+                            console.log("Checking: " + t + ":" + s + ":" + b)
                             if(!this.checkUseBit(t, s, b)){
+                                
                                 var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
                 
                                 var data = JSON.parse(uncleanData);
                                 
                                 var diskFN = '';
                                 
-                                for (var i = 0; i <= _fileNameSize; i++){
-                                    if (data[i+2] != "00"){
-                                        diskFN += String.fromCharCode(data[i+2]);
+                                for (var i = 0; i < _fileNameSize; i++){
+                                    if (data[i+1] != "00"){
+                                        console.log("Data: " + data[i+1]);
+                                        console.log("unHex: " + parseInt(data[i+1]))
+                                        diskFN += String.fromCharCode(parseInt(data[i+1],16).toString());
                                     }
                                 }
-                                //console.log("DiskFN: " + diskFN);
-                                //console.log("File name: " + file_name);
+                                console.log("DiskFN: " + diskFN);
+                                console.log("File name: " + file_name);
                                 if (file_name === diskFN){
-                                    //console.log('Found file: ' + diskFN);
+                                    console.log('Found file: ' + diskFN);
                                     return [t, s, b];
                                 }
                             }

@@ -107,7 +107,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellWrite, "write", '<file_name> "data"- Writes to a file on hard drive.');
             this.commandList[this.commandList.length] = sc;
             // delete <file_name>
-            sc = new TSOS.ShellCommand(this.shellDelete, "delete", '<file_name> - Writes to a file on hard drive.');
+            sc = new TSOS.ShellCommand(this.shellDelete, "delete", '<file_name> - Deletes a file on hard drive.');
             this.commandList[this.commandList.length] = sc;
             
             // ps  - list the running processes and their IDs
@@ -579,34 +579,40 @@ var TSOS;
             }
         };
         Shell.prototype.shellRead = function (args){
+            //TODO: Implement this...
             console.log("Not done yet");
-            /*
             if (args.length !== 1){
                 _StdOut.putText('Usage: read <file_name>'); 
             }
             else{
                 if (args[0].length <= _fileNameSize){
-                    _hdd.read(args[0]);
+                    _krnfsDDDriver.krnfsDDReadFile(args[0]);
                 } else {
                     _StdOut.putText("Invalid file name!");
                 }
             }
-            */
         };
         Shell.prototype.shellWrite = function (args){
-            console.log("Not done yet");
-            /*
-            if (args.length !== 1){
-                _StdOut.putText('Usage: read <file_name>'); 
+            if (args.length !== 2){
+                _StdOut.putText('Usage: write <file_name> "data"'); 
             }
             else{
                 if (args[0].length <= _fileNameSize){
-                    _hdd.read(args[0]);
+                    // args[0] = file_name
+                    // args[1] = data
+                    if(_krnfsDDriver.krnfsDDEditFile(args[0], args[1])){
+                        _StdOut.putText("File " + args[0] + " edited!");
+                    } else {
+                        _StdOut.putText("File " + args[0] + " unsuccessfully edited!");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("Read console for more info.");
+                        _StdOut.advanceLine();
+                        _StdOut.putText(">");
+                    }
                 } else {
                     _StdOut.putText("Invalid file name!");
                 }
             }
-            */
         };
         Shell.prototype.shellDelete = function (args){
             if (args.length !== 1){
