@@ -166,20 +166,20 @@ var TSOS;
             
             var i;
             var charCode;
-            console.log("T: " + t + (t == 0));
-            console.log("S: " + s + (s == 0));
-            console.log("B: " + b + (b == 0));
-            console.log(t == 0 && s == 0 && b == 0);
+            //console.log("T: " + t + (t == 0));
+            //console.log("S: " + s + (s == 0));
+            //console.log("B: " + b + (b == 0));
+            //console.log(t == 0 && s == 0 && b == 0);
             if (!(t === 0 && s === 0 && b === 0)){ 
-                console.log("start t: " + t + " s:" + s + " b:" + b);
+                //console.log("start t: " + t + " s:" + s + " b:" + b);
                 while(!(t === 0 && s === 0 && b === 0)){
-                    console.log("here " + t + ":" + s + ":" + b)
+                    //console.log("here " + t + ":" + s + ":" + b)
                     data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
                     for (i = 1; i < _fileNameSize; i++){
                         if(data[i] === "00"){
                             break;
                         } else {
-                            console.log("Data: " + data[i]);
+                            //console.log("Data: " + data[i]);
                             charCode = parseInt(data[i], 16)
                             contents += String.fromCharCode(charCode);
                         }
@@ -189,7 +189,7 @@ var TSOS;
                     t = chainTSB[0];
                     s = chainTSB[1];
                     b = chainTSB[2];
-                    console.log("after t: " + t + " s:" + s + " b:" + b);
+                    //console.log("after t: " + t + " s:" + s + " b:" + b);
                 }
             }
             
@@ -212,57 +212,6 @@ var TSOS;
             _Kernel.krnTrace("Editing file " + file_name);
             console.log("Editing file: " + file_name);
 
-            /*
-                var p = 0; // Pointer for character in data
-                var i = 0; // Tracks bytes used in block
-                while data.length !== 0{ // While there's still data
-                    if i <= _fileNameSize{ // While there is still space in the block
-                        data[p] translate it to charcode, then hex
-                        
-                        write data to block
-                        
-                        data[i] = data[i].splice(0, i) + data[i].splice(i+1);
-                        
-                        i++; // Increment block tracker
-                        p++; // Increment data char pointer
-                    } else {
-                        if chainBit != 00 00 00{ // If there's no already allocated blocks for data
-                            setChainBit(t, s, b);
-                            i = 0;
-                        } else {
-                            getChainBit(t, s, b);
-                            
-                            // set new t, s, b
-                            
-                            i = 0;
-                        }
-                    }
-                }
-                
-                if chainBit !== 00 00 00 { // If there's more linked blocks
-                    getChainBit // Get the next linked block
-                    // Delete remaining blocks
-                    
-                    var nextChain = _hdd.getChainBit(t, s, b);
-                    
-                    _hdd.zeroBlock(t, s, b);
-                    
-                    while( nextChain == 00 00 00){
-                        var t = nextChain[0];
-                        var s = nextChain[1];
-                        var b = nextChain[2];
-                        
-                        nextChain = _hdd.getChainBit(parseInt(t), parseInt(s), parseInt(b));
-                        
-                        _hdd.zeroBlock(parseInt(t), parseInt(s), parseInt(b));
-                        console.log("Deleting: " + parseInt(t) + ":" + parseInt(s) + ":" + parseInt(b));
-                    }
-                }
-                
-                update hdd table
-            */
-            
-            /* ----------------------------------------------TOP ---------------------------------------------------------------------------*/
             // Retrieves TSB of directory
             var originTSB = _hdd.findFile(file_name);
             
@@ -292,7 +241,9 @@ var TSOS;
             var char = '';
             var nextChainBit;
             var newChainBit;
+            
             while (data.length > 0){ // While there's still data
+            
                 if (i < _fileNameSize){ // While there is still space in the block
                     // data[p] translate it to charcode, then hex
                     charCode = data.charCodeAt(0);
@@ -306,7 +257,7 @@ var TSOS;
                     // Delete char from data
                     //console.log(data[0]);
                     if (data.length > 1){
-                        data = data.substr(1);//+ data.slice(1); 
+                        data = data.substr(1);
                     } else{
                         data = '';
                     }
@@ -318,7 +269,9 @@ var TSOS;
                     p++; // Increment data char pointer
                 } else { // If there's no room in block, but still data
                     nextChainBit = _hdd.getChainBit(t, s, b)
-                    if (nextChainBit[0] !== "00" && nextChainBit[1] !== "00" && nextChainBit[2] !== "00"){ // If there is no chain bit, but still data
+                    
+                    if (nextChainBit[0] === 0 && nextChainBit[1] === 0 && nextChainBit[2] === 0){ //(nextChainBit[0] !== "00" && nextChainBit[1] !== "00" && nextChainBit[2] !== "00"){ // If there is no chain bit, but still data
+                        console.log("HERE");
                         // ZFOD
                         _hdd.zeroBlock(t, s, b) 
                         
@@ -326,7 +279,7 @@ var TSOS;
                         _hdd.write(t, s, b, newBlock);
                         
                         // Set it to in-use
-                        _hdd.flipUseBit(t, s, b);
+                        //_hdd.flipUseBit(t, s, b);
                         
                         // Set chainBit
                         _hdd.setChainBit(t, s, b);
@@ -339,11 +292,15 @@ var TSOS;
                         t = newChainBit[0]
                         s = newChainBit[1]
                         b = newChainBit[2]
-                    }
-                    else {
+                        newBlock = [];
+                        
+                        for (var l = 0; l < _blockSize; l++){
+                            newBlock.push('00');
+                        }
+                    } else {
                         // Get next block
                         newChainBit = _hdd.getChainBit(t, s, b);
-                        
+                        console.log("New chainBit " + newChainBit);
                         // ZFOD
                         _hdd.zeroBlock(t, s, b) 
                         
@@ -356,11 +313,23 @@ var TSOS;
                         b = newChainBit[2]
                         
                         i = 0;
+                        newBlock = [];
+                        for (var l = 0; l < _blockSize; l++){
+                            newBlock.push('00');
+                        }
                     }
                 }
             }
             
             // Need to write the last block after data is complete
+            _hdd.setChainBit(t, s, b);
+            
+            newTSB = _hdd.getChainBit(t, s, b)
+            
+            t = newTSB[0];
+            s = newTSB[1];
+            b = newTSB[2];
+            
             // ZFOD
             _hdd.zeroBlock(t, s, b) 
             
@@ -370,14 +339,13 @@ var TSOS;
             // Set it to in-use
             _hdd.flipUseBit(t, s, b);
             
-            _hdd.updateHDDTable();
-            if (t !== "00" && s !== "00" && b !== "00") { // If there's more linked blocks
+            if (!(t === 0 && s === 0 && b === 0)) { // If there's more linked blocks
                 // Delete remaining blocks
                 var nextChain = _hdd.getChainBit(t, s, b);
                 //console.log("Next: " + nextChain);
                 //console.log("New Data in " + t + ":" + s + ":" + b + ": " + sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
-                if (nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
-                    /*while( nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
+                if (!(nextChain[0] === 0 && nextChain[1] === 0 && nextChain[2] === 0)){ //(nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
+                    while(!(nextChain[0] === 0 && nextChain[1] === 0 && nextChain[2] === 0)){
                         var t = nextChain[0];
                         var s = nextChain[1];
                         var b = nextChain[2];
@@ -386,8 +354,7 @@ var TSOS;
                         
                         _hdd.zeroBlock(parseInt(t), parseInt(s), parseInt(b));
                         console.log("Deleting remaining blocks: " + parseInt(t) + ":" + parseInt(s) + ":" + parseInt(b));
-                        break;
-                    }*/
+                    }
                     
                 }
             }
@@ -409,7 +376,7 @@ var TSOS;
             var t = 0;
             for (var s = 0; s < _hdd.sectors; s++){
                 for (var b = 0; b < _hdd.blocks; b++){
-                    if (b !== 0 || s !== 0){
+                    if (!(t === 0 && s === 0 && b === 0)){
                         if (!_hdd.checkUseBit(t, s, b)){
                             //console.log("TSB:" + t + ":" + s + ":" + b);
                             var fn = '';

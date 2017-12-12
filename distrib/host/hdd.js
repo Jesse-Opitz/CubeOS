@@ -132,8 +132,11 @@ var TSOS;
         };
         hdd.prototype.zeroBlock = function (t, s, b){
             // Enables use of zfod
-            _hdd.write(t, s, b, _emptyBlock);
-            
+            var nullBlock = [];
+            for (var l = 0; l < _blockSize; l++){
+                nullBlock.push('00');
+            }
+            _hdd.write(t, s, b, nullBlock);
         };
         hdd.prototype.updateHDDTable = function (){
             // Updates the gui for hdd
