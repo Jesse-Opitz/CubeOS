@@ -108,7 +108,7 @@ var TSOS;
             console.log("Deleting file: " + file_name);
             //console.log("Deleting file " + file_name);
             var originTSB = _hdd.findFile(file_name);
-            console.log("Origin TSB: " + originTSB);
+            //console.log("Origin TSB: " + originTSB);
             if (originTSB != false){
                 var originT = originTSB[0];
                 var originS = originTSB[1];
@@ -118,7 +118,7 @@ var TSOS;
                 
                 _hdd.zeroBlock(originT, originS, originB);
                 
-                while(nextChain[0] !== "00" && nextChain[1] !== "00" && nextChain[2] !== "00") { // nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
+                while(nextChain[0] !== 0 && nextChain[1] !== 0 && nextChain[2] !== 0) { // nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
                     var t = nextChain[0];
                     var s = nextChain[1];
                     var b = nextChain[2];
@@ -126,10 +126,10 @@ var TSOS;
                     nextChain = _hdd.getChainBit(parseInt(t), parseInt(s), parseInt(b));
                     
                     _hdd.zeroBlock(parseInt(t), parseInt(s), parseInt(b));
-                    console.log("Deleting: " + parseInt(t) + ":" + parseInt(s) + ":" + parseInt(b));
+                    //console.log("Deleting: " + parseInt(t) + ":" + parseInt(s) + ":" + parseInt(b));
                 }
                 _hdd.updateHDDTable();
-                console.log(file_name + " successfully deleted!");
+                //console.log(file_name + " successfully deleted!");
                 _Kernel.krnTrace(file_name + " successfully deleted!");
             } else{
                 _Kernel.krnTrace(file_name + " not successfully deleted!");
@@ -273,8 +273,11 @@ var TSOS;
             t = fileTSB[0];
             s = fileTSB[1];
             b = fileTSB[2];
-
-            var newBlock = _emptyBlock;//JSON.parse(sessionStorage.getItem("TSB:" + originT + ":" + originS + ":" + originB));
+            
+            var newBlock = [];
+            for (var l = 0; l < _blockSize; l++){
+                newBlock.push('00');
+            }
             
             var p = 0; // Pointer for character in data
             var i = 0; // Tracks bytes used in block

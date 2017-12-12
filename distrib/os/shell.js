@@ -590,7 +590,7 @@ var TSOS;
                         _StdOut.putText(fileOutput);
                         _StdOut.advanceLine();
                     } else{
-                        _StdOut.putText("File " + file_name + " unsuccessfully read!");
+                        _StdOut.putText("File " + args[0] + " unsuccessfully read!");
                         _StdOut.advanceLine();
                         _StdOut.putText("Read console for more info.");
                         _StdOut.advanceLine();
