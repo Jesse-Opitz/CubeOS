@@ -579,21 +579,28 @@ var TSOS;
             }
         };
         Shell.prototype.shellRead = function (args){
-            //TODO: Implement this...
-            console.log("Not done yet");
             if (args.length !== 1){
                 _StdOut.putText('Usage: read <file_name>'); 
             }
             else{
                 if (args[0].length <= _fileNameSize){
-                    _krnfsDDDriver.krnfsDDReadFile(args[0]);
+                    fileOutput = _krnfsDDDriver.krnfsDDReadFile(args[0]);
+                    
+                    if(fileOutput != false){
+                        _StdOut.putText(fileOutput);
+                        _StdOut.advanceLine();
+                    } else{
+                        _StdOut.putText("File " + file_name + " unsuccessfully read!");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("Read console for more info.");
+                        _StdOut.advanceLine();
+                    }
                 } else {
                     _StdOut.putText("Invalid file name!");
                 }
             }
         };
         Shell.prototype.shellWrite = function (args){
-            
             if (args.length === 0){
                 _StdOut.putText('Usage: write <file_name> "data"'); 
             }

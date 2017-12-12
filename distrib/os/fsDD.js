@@ -137,15 +137,67 @@ var TSOS;
             }
         };
         fsDD.prototype.krnfsDDReadFile = function (file_name) {
-            // Edits a file on the disk
-            // TODO: Implement this..
+            // Reads a file on the disk
             _Kernel.krnTrace("Reading file " + file_name);
             console.log("Reading file: " + file_name);
             
-            console.log("**NOT DONE**");
+            var contents = '';
+            var data;
+            
+            // Retrieves TSB of directory
+            var dirTSB = _hdd.findFile(file_name);
+            
+            if (dirTSB === false){
+                console.log("Could not find file " + file_name);
+                _Kernel.krnTrace("UNSUCCESSFUL READ: Could not find file " + file_name);
+                return false;
+            }
+            
+            var t = dirTSB[0];
+            var s = dirTSB[1];
+            var b = dirTSB[2];
+            
+            var chainTSB = _hdd.getChainBit(t, s, b);
+            
+            t = chainTSB[0];
+            s = chainTSB[1];
+            b = chainTSB[2];
+            
+            var i;
+            var charCode;
+            if (t !== "00" && s !== "00" && b !== "00"){
+                while( t !== 0 && s !== 0 && b !== 0){
+                    console.log("here " + t + ":" + s + ":" + b)
+                    data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
+                    for (i = 1; i < _fileNameSize; i++){
+                        if(data[i] === "00"){
+                            break;
+                        } else {
+                            charCode = parseInt(data[i], 16)
+                            contents += String.fromCharCode(charCode);
+                        }
+                    }
+                    chainTSB = _hdd.getChainBit(t, s, b);
+                
+                    t = chainTSB[0];
+                    s = chainTSB[1];
+                    b = chainTSB[2];
+                }
+            }
+            
+            data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
+            for (i = 0; i < _fileNameSize; i++){
+                if(data[i] === "00"){
+                    break;
+                } else {
+                    charCode = parseInt(data[i], 16)
+                    contents += String.fromCharCode(charCode);
+                }
+            }
             
             console.log("Done Reading.");
             _Kernel.krnTrace("Reading file " + file_name + " successful.");
+            return contents;
         };
         fsDD.prototype.krnfsDDEditFile = function (file_name, data) {
             // Edits a file on the disk
@@ -206,7 +258,7 @@ var TSOS;
             // Retrieves TSB of directory
             var originTSB = _hdd.findFile(file_name);
             
-            if (!originTSB){
+            if (originTSB === false){
                 console.log("Could not find file " + file_name);
                 _Kernel.krnTrace("UNSUCCESSFUL EDIT: Could not find file " + file_name);
                 return false;
@@ -241,13 +293,13 @@ var TSOS;
                     newBlock[i+1] = hexCode;
                     
                     // Delete char from data
-                    console.log(data[0]);
+                    //console.log(data[0]);
                     if (data.length > 1){
                         data = data.substr(1);//+ data.slice(1); 
                     } else{
                         data = '';
                     }
-                    console.log(data);
+                    //console.log(data);
                     // Save the new data in block
                     //newBlock[i+1] = //JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
                     
@@ -311,8 +363,8 @@ var TSOS;
             if (t !== "00" && s !== "00" && b !== "00") { // If there's more linked blocks
                 // Delete remaining blocks
                 var nextChain = _hdd.getChainBit(t, s, b);
-                console.log("Next: " + nextChain);
-                console.log("New Data in " + t + ":" + s + ":" + b + ": " + sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
+                //console.log("Next: " + nextChain);
+                //console.log("New Data in " + t + ":" + s + ":" + b + ": " + sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
                 if (nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
                     /*while( nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
                         var t = nextChain[0];
@@ -348,12 +400,12 @@ var TSOS;
                 for (var b = 0; b < _hdd.blocks; b++){
                     if (b !== 0 || s !== 0){
                         if (!_hdd.checkUseBit(t, s, b)){
-                            console.log("TSB:" + t + ":" + s + ":" + b);
+                            //console.log("TSB:" + t + ":" + s + ":" + b);
                             var fn = '';
                             var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
             
                             var data = JSON.parse(uncleanData);
-                            console.log(data[2]);
+                            //console.log(data[2]);
                             // Start at 2 to skip use-bit and extra bit
                             var i = 2;
                             while (i < _fileNameSize){
