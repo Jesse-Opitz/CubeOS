@@ -394,7 +394,7 @@ var TSOS;
                     // Updates HTML PCB Table
                     _PCB.updatePCBTable();
                     
-                    _MemoryManager.updateResQTable();
+                    _MemoryManager.updateResQRows();
                 }
                 else {
                     var hdPCB = new TSOS.PCB(_PID);
@@ -416,6 +416,7 @@ var TSOS;
                     // Increment PID
                     _PID = _PID + 1;
                     
+                    _MemoryManager.updateResQRows();
                     _hdd.updateHDDTable();
                 }
             }
@@ -426,35 +427,35 @@ var TSOS;
         };
         Shell.prototype.shellRun = function(args){
             // Runs the input process
-            var found = false;
+            var found1 = false;
             if (args.length < 1) {
                 _StdOut.putText("Usage: run <pid> Please input a pid.");
             }
             
             // See if PID is in Ready queue
-            for (var i = 0; i < _readyQueue.getSize(); i++){
-                if (args[0] == _readyQueue.q[i]){
-                    found = true;
+            for (var i = 0; i < _residentQueue.getSize(); i++){
+                if (args[0] == _residentQueue.q[i].PID){
+                    found1 = true;
                     // Store the running PID
                     var activePID = i;
                 }
             }
             
             if (_CPU.isSingleStep === false){
-                if (found != true){
+                if (found1 != true){
                     _StdOut.putText("Please enter a valid PID.")
                     
                 }else{
                     _StdOut.putText("Running process: " + args[0]);
                     var resQIndex = -1;
-                    var found = false;
+                    var found2 = false;
                     for (var i = 0; i < _residentQueue.getSize(); i++){
                         if (_residentQueue.q[i].PID == activePID){
                             resQIndex = i;
-                            found = true;
+                            found2 = true;
                         }
                     }
-                    if(found){ //TODO: I think there is an issue here somewhere
+                    if(found2){ //TODO: I think there is an issue here somewhere
                         // Segment of memory
                         _PCB = _residentQueue.q[resQIndex];
                         _PCB.updatePCBTable();
@@ -499,12 +500,14 @@ var TSOS;
         };
         Shell.prototype.shellClearmem = function (args){
             // Clears memory
+            for(var i = 0; i < _residentQueue.getSize();i++){
+                _MemoryManager.removeResQRow(_residentQueue.q[i].PID);
+            }
             _Memory.clearMem(0, _DefaultMemorySize);
             _MemoryManager.updateMemTable();
             _readyQueue.q = [];
             _residentQueue.q = [];
             _segNumber = 0;
-            _MemoryManager.updateResQTable();
 
         };
         Shell.prototype.shellQuantum = function (args){

@@ -32,6 +32,7 @@ var TSOS;
             for (var i = 0; i < _residentQueue.getSize(); i++){
                 if (_residentQueue.q[i].PID == pid){
                     //var indexOfResQ = i;
+                    _MemoryManager.removeResQRow(pid);
                     console.log("Killing resident queue pid: " + _residentQueue.q[i]);
                     _residentQueue.q.splice(i, 1);
                 }
@@ -77,6 +78,46 @@ var TSOS;
                     this.roundRobin();
             }
             
+        };
+        Scheduler.prototype.rollIn = function (pid) {
+            // Rolls a program into memory
+            var newData = _krnfsDDDriver.krnfsDDReadFile(pid);
+            
+            // _PCB is the last used process
+            base = _PCB.base;
+            limit = _PCB.limit;
+            lastUsedPID = _PCB.PID;
+            for (var i = 0; i < _residentQueue.getSize();i++) {
+                if(_residentQueue.q[i].PID === pid) {
+                    _PCB = _residentQueue.q[i].PID;
+                    _PCB.base = base;
+                    _PCB.limit = limit;
+                    _PCB.loc = 'Memory';
+                    document.getElementById("loc" + pid).innerHTML = 'Memory';
+                }
+            }
+            
+            _Memory.write(newData);
+        };
+        
+        Scheduler.prototype.rollOut = function(pid){
+            // Roll out must go before roll in
+            // Rolls program out to HDD
+            _krnfsDDDriver.krnfsDDCreateFile(pid);
+            
+            for (var i = 0; i < _residentQueue.getSize();i++) {
+                if(_residentQueue.q[i].PID === lastUsedPID) {
+                    _residentQueue.q[i].loc = 'HDD';
+                    document.getElementById("loc" + lastUsedPID).innerHTML = 'HDD';
+                }
+            }
+            
+            var oldData = '';
+            for (var j = _PCB.base; j < _PCB.limit; j++){
+                oldData += _Memory.bytes[j].toString();
+            }
+            
+            _krnfsDDDriver.krnfsDDEditFile(_PCB.PID, oldData);
         };
         
         Scheduler.prototype.contextSwitch = function (){
@@ -130,7 +171,8 @@ var TSOS;
                 }
             }
             
-            _MemoryManager.updateResQTable();
+            //_MemoryManager.updateResQTable();
+            _MemoryManager.updateResQRows();
             _PCB.updatePCBTable();
             
             _CPU.X = _PCB.X;
@@ -148,6 +190,7 @@ var TSOS;
             // Check for single run or runall
             console.log("PID-:" + _PCB.PID + " Quantum: " + _progCounter);
             if ((_progCounter >= this.quantum || _PCB.IR == '00')){
+                document.getElementById("act" + _PCB.PID).innerHTML = 'Ready';
                 this.quantum = _quantum;
                 if (_isRun){
                     console.log('isRun is '  + _isRun);

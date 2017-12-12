@@ -60,7 +60,18 @@ var TSOS;
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
             _PCB.active = 'Executing';
-            _MemoryManager.updateResQTable();
+            // "rqPID:" +_residentQueue.q[i].PID
+            document.getElementById("act" + _PCB.PID).innerHTML = 'Executing';
+            /*for (var i = 0; i < _residentQueue.getSize(); i++){
+                if(_residentQueue.q[i].PID === _PCB.PID){
+                    console.log("here --");
+                    _residentQueue.q[i].active = 'Executing'
+                    _MemoryManager.updateResQRows();
+                    break;
+                }
+            }*/
+            
+            
             _progCounter++;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
@@ -639,8 +650,7 @@ var TSOS;
                 }
                 
             }
-            
-            _MemoryManager.updateMemTable(_Memory.bytes);
+            _MemoryManager.updateResQRows();
             _PCB.updatePCBTable();
             _CPU.updateCPUTable();
         };

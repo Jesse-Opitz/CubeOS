@@ -28,7 +28,7 @@ var _MemoryManager; // Instance of memory manager
 
 var _PCB; // Instance of a Process Control Block (PCB Class)
 var residentQueue; // Stores the PCBs created
-
+var _resQTable = [];
 var _segNumber = 0; // Number for which segment is next to put code in
 
 var _PID = 0; // Current PCB ID

@@ -76,6 +76,7 @@ var TSOS;
             document.getElementById("display").focus();
             // Create Memory manager
             _MemoryManager = new TSOS.MemoryManager();
+            _MemoryManager.createResQTable();
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.

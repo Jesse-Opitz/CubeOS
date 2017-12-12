@@ -109,38 +109,109 @@ var TSOS;
             return [base, limit];
         };
         
-        // Since memory manager manages the segments, I'm guessing
-        // it manages resident queue, as well?
-        // I have no clue 
-        // TODO:I accidentally called this ResQ...Will change
-        // Updates Ready Queue table
-        MemoryManager.prototype.updateResQTable = function(){
-            for (var i = 0; i < _readyQueue.getSize(); i++){
-                if (_readyQueue.q[i] === undefined){
-                    document.getElementById("ready" + i).innerHTML = '- No program loaded';
-                } else {
-                    var status = '';
-                    for (var j = 0; j < _residentQueue.getSize(); j++){
-                        if(_residentQueue.q[j].PID === _readyQueue.q[i]){
-                            status = _residentQueue.q[j].active;
-                            break;
-                        }
-                    }
+        // clearResQTable
+        MemoryManager.prototype.removeResQRow = function(pid){
+            // remove row "rqPID:" +_residentQueue.q[i].PID
+            var row = document.getElementById("rqPID:" + pid);
+            row.parentNode.removeChild(row);
+        };
+        
+        MemoryManager.prototype.updateResQRows = function (){
+            var tblBody = document.getElementById("rqTble");
+            
+            // creating all cells
+            for (var i = 0; i < _residentQueue.getSize(); i++) {
+                //console.log("Here: " + _resQTable.indexOf(_residentQueue.q[i].PID) >= 0)
+                //console.log("Here: " + _resQTable.indexOf(_residentQueue.q[i].PID))
+                if(_resQTable.indexOf(_residentQueue.q[i].PID) === -1){
+                    // creates a table row
+                    var row = document.createElement("tr");
+                    var pidCell = document.createElement("td");
+                    var pid = document.createTextNode(_residentQueue.q[i].PID);
                     
-                    document.getElementById("ready" + i).innerHTML = _readyQueue.q[i] + ' - ' + status;//_residentQueue.q[i].active;
+                    var actCell = document.createElement("td");
+                    var active = document.createTextNode(_residentQueue.q[i].active);
+                    
+                    var locCell = document.createElement("td");
+                    var location = document.createTextNode(_residentQueue.q[i].loc);
+                    
+                    pidCell.appendChild(pid);
+                    pidCell.setAttribute("id", "pid" + _residentQueue.q[i].PID);
+                    
+                    actCell.appendChild(active);
+                    actCell.setAttribute("id", "act" + _residentQueue.q[i].PID);
+                    
+                    locCell.appendChild(location);
+                    locCell.setAttribute("id", "loc" + _residentQueue.q[i].PID);
+                    
+                    row.setAttribute("id", "rqPID:" +_residentQueue.q[i].PID)
+                    
+                    row.appendChild(pidCell);
+                    row.appendChild(actCell);
+                    row.appendChild(locCell);
+     
+                    // add the row to the end of the table body
+                    tblBody.appendChild(row);
+                    
+                    _resQTable.push(_residentQueue.q[i].PID);
                 }
             }
+            
+            //document.getElementById("rqHead").setAttribute("colspan", _residentQueue.q.length);
         };
-        // Since memory manager manages the segments, I'm guessing
-        // it manages resident queue, as well?
-        // I have no clue 
-        // TODO:I accidentally called this ResQ...Will change
-        // Clears ReadyQueue table
-        MemoryManager.prototype.clearResQTable = function(){
-            for (var i = 0; i < 3; i++){
-                document.getElementById("ready" + i).innerHTML = '- No program loaded';
-            }
-        };
+        MemoryManager.prototype.createResQTable = function(){
+            var body = document.getElementById("divReadyQueue");
+            // creates a <table> element and a <tbody> element
+            var tbl = document.createElement("table");
+            var tblBody = document.createElement("tbody");
+            tblBody.setAttribute("id", "rqTble");
+
+            var tblHead = document.createElement("thead");
+            var headRow = document.createElement("tr");
+            var head = document.createElement("th");
+            var headText = document.createTextNode("Resident Queue");
+            
+            head.setAttribute("colspan","3");
+            head.setAttribute("style", "text-align:center;");
+            head.setAttribute("id", "rqHead");
+            
+            head.appendChild(headText);
+            headRow.appendChild(head);
+            tblHead.appendChild(headRow);
+            tbl.appendChild(tblHead);
+            
+            // creates a table row
+            var row = document.createElement("tr");
+            var pidCell = document.createElement("td");
+            var pid = document.createTextNode("PID");
+            
+            var actCell = document.createElement("td");
+            var active = document.createTextNode("Status");
+            
+            var locCell = document.createElement("td");
+            var location = document.createTextNode("Location");
+            
+            pidCell.appendChild(pid);
+            actCell.appendChild(active);
+            locCell.appendChild(location);
+            
+            row.appendChild(pidCell);
+            row.appendChild(actCell);
+            row.appendChild(locCell);
+            
+            row.setAttribute("style", "font-weight: bold;")
+            // add the row to the end of the table body
+            tblBody.appendChild(row);
+
+            //put the <thead> in the <table>
+            //tbl.appendChild(tblHead);
+            // put the <tbody> in the <table>
+            tbl.appendChild(tblBody);
+            // appends <table> into <body>
+            body.appendChild(tbl);
+            // sets the class to bootstrap settings
+            tbl.setAttribute("class", "table table-bordered table-responsive");
+        }
         
         // Used to edit specific parts of memory
         // Mainly for storing the accumulator in memory, op code 8D
