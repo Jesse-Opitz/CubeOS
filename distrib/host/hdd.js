@@ -53,12 +53,17 @@ var TSOS;
         };
         hdd.prototype.write = function (t, s, b, data) {
             // Writes to a single block on the disk
-            //console.log('Writing ' + data + ' to tsb ' + t + ':' + s + ':' + b);
+            // @params:
+            // @data - An array of 64 bytes
+            // @returns:
+            // true - If it was able to write to the block
+            // false - If it couldn't write to the block
             if (t < this.tracks && s < this.sectors && b < this.blocks){
                 sessionStorage.setItem("TSB:" + t + ":" + s + ":" + b, JSON.stringify(data));
-                //console.log("New Data: " + sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
+                return true;
             } else{
                 console.log("Stay in your cube! " + t + ":" + s + ":" + b + " is not in your cube!");
+                return false;
             }
         };
         hdd.prototype.checkUseBit = function (t, s, b){
@@ -123,7 +128,7 @@ var TSOS;
             var nextS = data[_blockSize-2];
             var nextB = data[_blockSize-1];
             
-            return [nextT, nextS, nextB];
+            return [parseInt(nextT), parseInt(nextS), parseInt(nextB)];
         };
         hdd.prototype.zeroBlock = function (t, s, b){
             // Enables use of zfod
@@ -148,7 +153,7 @@ var TSOS;
                 for (var s = 0; s < _hdd.sectors; s++){
                     for (var b = 0; b < _hdd.blocks; b++){
                         if (b !== 0 || s !== 0){
-                            console.log("Checking: " + t + ":" + s + ":" + b)
+                            //console.log("Checking: " + t + ":" + s + ":" + b)
                             if(!this.checkUseBit(t, s, b)){
                                 
                                 var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
@@ -159,15 +164,15 @@ var TSOS;
                                 
                                 for (var i = 0; i < _fileNameSize; i++){
                                     if (data[i+1] != "00"){
-                                        console.log("Data: " + data[i+1]);
-                                        console.log("unHex: " + parseInt(data[i+1]))
+                                        //console.log("Data: " + data[i+1]);
+                                        //console.log("unHex: " + parseInt(data[i+1]))
                                         diskFN += String.fromCharCode(parseInt(data[i+1],16).toString());
                                     }
                                 }
-                                console.log("DiskFN: " + diskFN);
-                                console.log("File name: " + file_name);
+                                //console.log("DiskFN: " + diskFN);
+                                //console.log("File name: " + file_name);
                                 if (file_name === diskFN){
-                                    console.log('Found file: ' + diskFN);
+                                    //console.log('Found file: ' + diskFN);
                                     return [t, s, b];
                                 }
                             }

@@ -593,21 +593,34 @@ var TSOS;
             }
         };
         Shell.prototype.shellWrite = function (args){
-            if (args.length !== 2){
+            
+            if (args.length === 0){
                 _StdOut.putText('Usage: write <file_name> "data"'); 
             }
             else{
-                if (args[0].length <= _fileNameSize){
-                    // args[0] = file_name
-                    // args[1] = data
-                    if(_krnfsDDriver.krnfsDDEditFile(args[0], args[1])){
-                        _StdOut.putText("File " + args[0] + " edited!");
+                // args[0] = file_name
+                // args[1+] = data
+                
+                var file_name = args[0];
+                var data = '';
+                
+                var i = 1;
+                while(i < args.length){
+                    data += args[i] + " ";
+                    i += 1;
+                }
+
+                file_name = file_name.trim();
+                data = data.trim().replace(/"/g, "");
+
+                if (file_name.length <= _fileNameSize){
+                    if(_krnfsDDDriver.krnfsDDEditFile(file_name.toString(), data.toString())){
+                        _StdOut.putText("File " + file_name + " edited!");
                     } else {
-                        _StdOut.putText("File " + args[0] + " unsuccessfully edited!");
+                        _StdOut.putText("File " + file_name + " unsuccessfully edited!");
                         _StdOut.advanceLine();
                         _StdOut.putText("Read console for more info.");
                         _StdOut.advanceLine();
-                        _StdOut.putText(">");
                     }
                 } else {
                     _StdOut.putText("Invalid file name!");
