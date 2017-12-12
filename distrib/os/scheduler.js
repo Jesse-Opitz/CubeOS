@@ -47,7 +47,7 @@ var TSOS;
                 _CPU.isExecuting = false;
             }
         };
-        Scheduler.prototype.getAvailablePIDS = function (){
+        /*Scheduler.prototype.getAvailablePIDS = function (){
             // Returns the list of all available PIDs
             var pids = [];
             
@@ -56,7 +56,7 @@ var TSOS;
             }
             
             return pids;
-        };
+        };*/
         
         Scheduler.prototype.cycle = function (){
             // Scheduler cycle event
@@ -84,9 +84,9 @@ var TSOS;
             var newData = _krnfsDDDriver.krnfsDDReadFile(pid);
             
             // _PCB is the last used process
-            base = _PCB.base;
-            limit = _PCB.limit;
-            lastUsedPID = _PCB.PID;
+            var base = _PCB.base;
+            var limit = _PCB.limit;
+            var lastUsedPID = _PCB.PID;
             for (var i = 0; i < _residentQueue.getSize();i++) {
                 if(_residentQueue.q[i].PID === pid) {
                     _PCB = _residentQueue.q[i].PID;
@@ -97,18 +97,18 @@ var TSOS;
                 }
             }
             
-            _Memory.write(newData);
+            _MemoryManager.write(newData);
         };
         
         Scheduler.prototype.rollOut = function(pid){
             // Roll out must go before roll in
             // Rolls program out to HDD
             _krnfsDDDriver.krnfsDDCreateFile(pid);
-            
+            console.log("Here created");
             for (var i = 0; i < _residentQueue.getSize();i++) {
-                if(_residentQueue.q[i].PID === lastUsedPID) {
+                if(_residentQueue.q[i].PID === pid) {
                     _residentQueue.q[i].loc = 'HDD';
-                    document.getElementById("loc" + lastUsedPID).innerHTML = 'HDD';
+                    document.getElementById("loc" + pid).innerHTML = 'HDD';
                 }
             }
             
@@ -150,9 +150,15 @@ var TSOS;
                     // Updates _PCB to correct PCB
                     for (var i = 0; i < _residentQueue.getSize();i++){
                         if (_residentQueue.q[i].PID == newPID){
-                            _PCB = _residentQueue.q[i];
+                            newPCB = _residentQueue.q[i];
                             //console.log("New PCB: " + _residentQueue.q[i])
                         }
+                    }
+                    if (newPCB.loc === 'Memory'){
+                        _PCB = newPCB;
+                    } else if (newPCB.loc === 'HDD'){
+                        this.rollOut(_PCB.PID);
+                        this.rollIn(newPCB.PID);
                     }
                 }
             } else{
@@ -165,9 +171,15 @@ var TSOS;
                 // Updates _PCB to correct PCB
                 for (var i = 0; i < _residentQueue.getSize();i++){
                     if (_residentQueue.q[i].PID == _readyQueue.q[0]){
-                        _PCB = _residentQueue.q[i];
-                        break;
+                        newPCB = _residentQueue.q[i];
+                        
                     }
+                }
+                if (newPCB.loc === 'Memory'){
+                    _PCB = newPCB;
+                } else if (newPCB.loc === 'HDD'){
+                    this.rollOut(_PCB.PID);
+                    this.rollIn(newPCB.PID);
                 }
             }
             

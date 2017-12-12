@@ -378,7 +378,7 @@ var TSOS;
                     _PCB.active = 'Ready';
                     
                     console.log("Created new PCB: " + _PCB);
-                    console.log("Available PIDs: " + _scheduler.getAvailablePIDS());
+                    console.log("Available PIDs: " + _readyQueue.toString());//_scheduler.getAvailablePIDS());
                     console.log("Resident Queue updated: " + _residentQueue.toString());
                     console.log("Ready Queue: " + _readyQueue.toString());
                     
@@ -399,10 +399,10 @@ var TSOS;
                 else {
                     var hdPCB = new TSOS.PCB(_PID);
                     
-                    _waitingQueue.enqueue(hdPCB.PID);
+                    _readyQueue.enqueue(hdPCB.PID);
                     _residentQueue.enqueue(hdPCB);
                     
-                    hdPCB.active = 'Waiting';
+                    hdPCB.active = 'Ready';
                     
                     hdPCB.loc = 'HDD';
                     
@@ -522,7 +522,7 @@ var TSOS;
             }
         };
         Shell.prototype.shellPs = function (args){
-            _StdOut.putText('Available PIDS: ' + _scheduler.getAvailablePIDS());
+            _StdOut.putText('Available PIDS: ' + _readyQueue.toString());//_scheduler.getAvailablePIDS());
         };
         Shell.prototype.shellSetSchedule = function (args){
             if (args.length < 1 || args.length > 1){

@@ -169,7 +169,7 @@ var TSOS;
             var tblHead = document.createElement("thead");
             var headRow = document.createElement("tr");
             var head = document.createElement("th");
-            var headText = document.createTextNode("Resident Queue");
+            var headText = document.createTextNode("Ready Queue");
             
             head.setAttribute("colspan","3");
             head.setAttribute("style", "text-align:center;");

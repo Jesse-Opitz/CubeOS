@@ -269,8 +269,8 @@ var TSOS;
                     p++; // Increment data char pointer
                 } else { // If there's no room in block, but still data
                     nextChainBit = _hdd.getChainBit(t, s, b)
-                    
-                    if (nextChainBit[0] === 0 && nextChainBit[1] === 0 && nextChainBit[2] === 0){ //(nextChainBit[0] !== "00" && nextChainBit[1] !== "00" && nextChainBit[2] !== "00"){ // If there is no chain bit, but still data
+                    console.log("Next: " + nextChainBit);
+                    if (parseInt(nextChainBit[0]) === 0 && parseInt(nextChainBit[1]) === 0 && parseInt(nextChainBit[2]) === 0){ //(nextChainBit[0] !== "00" && nextChainBit[1] !== "00" && nextChainBit[2] !== "00"){ // If there is no chain bit, but still data
                         // ZFOD
                         _hdd.zeroBlock(t, s, b) 
                         
@@ -278,7 +278,7 @@ var TSOS;
                         _hdd.write(t, s, b, newBlock);
                         
                         // Set it to in-use
-                        //_hdd.flipUseBit(t, s, b);
+                        _hdd.flipUseBit(t, s, b);
                         
                         // Set chainBit
                         _hdd.setChainBit(t, s, b);
@@ -291,6 +291,7 @@ var TSOS;
                         t = newChainBit[0]
                         s = newChainBit[1]
                         b = newChainBit[2]
+                        console.log("New TSB: " + t + ":" + s + ":" + b);
                         newBlock = [];
                         
                         for (var l = 0; l < _blockSize; l++){
@@ -320,8 +321,9 @@ var TSOS;
                     }
                 }
             }
-            
+            /*
             // Need to write the last block after data is complete
+
             _hdd.setChainBit(t, s, b);
             
             newTSB = _hdd.getChainBit(t, s, b)
@@ -329,7 +331,7 @@ var TSOS;
             t = newTSB[0];
             s = newTSB[1];
             b = newTSB[2];
-            
+            */
             // ZFOD
             _hdd.zeroBlock(t, s, b) 
             
