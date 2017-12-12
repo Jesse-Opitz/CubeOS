@@ -39,6 +39,7 @@ var _isRun = false; // Boolean for single run (true) or runall (false)
 // For scheduling
 var _scheduler;
 var _readyQueue;
+var _waitingQueue;
 var _progCounter = 0;
 var _quantum = 6;
 

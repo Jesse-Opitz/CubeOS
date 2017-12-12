@@ -120,7 +120,7 @@ var TSOS;
             // Returns next location from chain bits of a block
             var uncleanData = sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b);
             //console.log("Unclean: " + uncleanData);
-            console.log("Chain bit tsb: " + t + ":" + s + ":" + b);
+            //console.log("Chain bit tsb: " + t + ":" + s + ":" + b);
             var data = JSON.parse(uncleanData);
             //console.log("Data: " + data);
             

@@ -362,6 +362,7 @@ var TSOS;
             var pattern = new RegExp("^[a-fA-F0-9 \n]+$");
             
             var isHex = pattern.test(opCodes);
+            
             if (isHex) {
                 console.log(_readyQueue + " Ready queue");
                 if (_readyQueue.getSize() < _MaxProcesses){
@@ -377,12 +378,9 @@ var TSOS;
                     _PCB.active = 'Ready';
                     
                     console.log("Created new PCB: " + _PCB);
-                    console.log("Available PIDs: " + _readyQueue.toString());
+                    console.log("Available PIDs: " + _scheduler.getAvailablePIDS());
                     console.log("Resident Queue updated: " + _residentQueue.toString());
                     console.log("Ready Queue: " + _readyQueue.toString());
-                    
-                    // Updates HTML PCB Table
-                    _PCB.updatePCBTable();
                     
                     // Write opcodes to memory
                     _MemoryManager.write(opCodes);
@@ -393,10 +391,34 @@ var TSOS;
                     // Increment PID
                     _PID = _PID + 1;
                     
+                    // Updates HTML PCB Table
+                    _PCB.updatePCBTable();
+                    
                     _MemoryManager.updateResQTable();
                 }
                 else {
-                    _StdOut.putText("Unable to load program: ready queue is full.")
+                    var hdPCB = new TSOS.PCB(_PID);
+                    
+                    _waitingQueue.enqueue(hdPCB.PID);
+                    _residentQueue.enqueue(hdPCB);
+                    
+                    hdPCB.active = 'Waiting';
+                    
+                    hdPCB.loc = 'HDD';
+                    
+                    _krnfsDDDriver.krnfsDDCreateFile(_PID.toString());
+                    
+                    _krnfsDDDriver.krnfsDDEditFile(_PID.toString(), opCodes.replace(/ /g,''));
+                    
+                    console.log(_krnfsDDDriver.krnfsDDReadFile(_PID.toString()));
+                    
+                    // Tell user the PID thats loaded
+                    _StdOut.putText("Program with PID " + _PID + " Loaded.");
+                    
+                    // Increment PID
+                    _PID = _PID + 1;
+                    
+                    _hdd.updateHDDTable();
                 }
             }
             else{
@@ -607,7 +629,6 @@ var TSOS;
             else{
                 // args[0] = file_name
                 // args[1+] = data
-                
                 var file_name = args[0];
                 var data = '';
                 

@@ -57,6 +57,7 @@ var TSOS;
             
             _readyQueue = new TSOS.Queue();
             _residentQueue = new TSOS.Queue();
+            _waitingQueue = new TSOS.Queue();
             
             // Initialize scheduler
             _scheduler = new TSOS.Scheduler();

@@ -115,11 +115,19 @@ var TSOS;
         // TODO:I accidentally called this ResQ...Will change
         // Updates Ready Queue table
         MemoryManager.prototype.updateResQTable = function(){
-            for (var i = 0; i < 3; i++){
+            for (var i = 0; i < _readyQueue.getSize(); i++){
                 if (_readyQueue.q[i] === undefined){
                     document.getElementById("ready" + i).innerHTML = '- No program loaded';
                 } else {
-                    document.getElementById("ready" + i).innerHTML = _readyQueue.q[i] + ' - ' + _residentQueue.q[i].active;
+                    var status = '';
+                    for (var j = 0; j < _residentQueue.getSize(); j++){
+                        if(_residentQueue.q[j].PID === _readyQueue.q[i]){
+                            status = _residentQueue.q[j].active;
+                            break;
+                        }
+                    }
+                    
+                    document.getElementById("ready" + i).innerHTML = _readyQueue.q[i] + ' - ' + status;//_residentQueue.q[i].active;
                 }
             }
         };

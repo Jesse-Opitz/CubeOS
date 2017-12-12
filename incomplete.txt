@@ -1,8 +1,0 @@
-[optional]	Track	turnaround	time	and	wait	time	for	each	process.
-
-Project 4 - Use session storage, not local storage
-|-> Track 0 Sector 0 Block 0 is the MBR
-|-> Track 0 for directory
-|-> Rest are used for Data
-
-We will use chaining to link code in hard drive file code together

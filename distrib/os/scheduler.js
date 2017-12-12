@@ -46,6 +46,16 @@ var TSOS;
                 _CPU.isExecuting = false;
             }
         };
+        Scheduler.prototype.getAvailablePIDS = function (){
+            // Returns the list of all available PIDs
+            var pids = [];
+            
+            for (var i = 0; i < _residentQueue.getSize(); i++){
+                pids.push(_residentQueue.q[i].PID);
+            }
+            
+            return pids;
+        };
         
         Scheduler.prototype.cycle = function (){
             // Scheduler cycle event
@@ -170,6 +180,7 @@ var TSOS;
                 // TODO: Implement this.
                 console.log("Running priority...");
             };
+            
         };
 
         return Scheduler;

@@ -138,6 +138,7 @@ var TSOS;
         };
         fsDD.prototype.krnfsDDReadFile = function (file_name) {
             // Reads a file on the disk
+            // @returns contents of the file
             _Kernel.krnTrace("Reading file " + file_name);
             console.log("Reading file: " + file_name);
             
@@ -159,20 +160,26 @@ var TSOS;
             
             var chainTSB = _hdd.getChainBit(t, s, b);
             
-            t = chainTSB[0];
-            s = chainTSB[1];
-            b = chainTSB[2];
+            t = parseInt(chainTSB[0]);
+            s = parseInt(chainTSB[1]);
+            b = parseInt(chainTSB[2]);
             
             var i;
             var charCode;
-            if (t !== "00" && s !== "00" && b !== "00"){
-                while( t !== 0 && s !== 0 && b !== 0){
+            console.log("T: " + t + (t == 0));
+            console.log("S: " + s + (s == 0));
+            console.log("B: " + b + (b == 0));
+            console.log(t == 0 && s == 0 && b == 0);
+            if (!(t === 0 && s === 0 && b === 0)){ 
+                console.log("start t: " + t + " s:" + s + " b:" + b);
+                while(!(t === 0 && s === 0 && b === 0)){
                     console.log("here " + t + ":" + s + ":" + b)
                     data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
                     for (i = 1; i < _fileNameSize; i++){
                         if(data[i] === "00"){
                             break;
                         } else {
+                            console.log("Data: " + data[i]);
                             charCode = parseInt(data[i], 16)
                             contents += String.fromCharCode(charCode);
                         }
@@ -182,6 +189,7 @@ var TSOS;
                     t = chainTSB[0];
                     s = chainTSB[1];
                     b = chainTSB[2];
+                    console.log("after t: " + t + " s:" + s + " b:" + b);
                 }
             }
             
@@ -285,7 +293,7 @@ var TSOS;
             var nextChainBit;
             var newChainBit;
             while (data.length > 0){ // While there's still data
-                if (i <= _fileNameSize){ // While there is still space in the block
+                if (i < _fileNameSize){ // While there is still space in the block
                     // data[p] translate it to charcode, then hex
                     charCode = data.charCodeAt(0);
                     
