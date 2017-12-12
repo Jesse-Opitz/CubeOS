@@ -410,8 +410,6 @@ var TSOS;
                     
                     _krnfsDDDriver.krnfsDDEditFile(_PID.toString(), opCodes.replace(/ /g,''));
                     
-                    console.log(_krnfsDDDriver.krnfsDDReadFile(_PID.toString()));
-                    
                     // Tell user the PID thats loaded
                     _StdOut.putText("Program with PID " + _PID + " Loaded.");
                     
@@ -521,7 +519,7 @@ var TSOS;
             }
         };
         Shell.prototype.shellPs = function (args){
-            _StdOut.putText('Ready PIDS: ' + _readyQueue.toString());
+            _StdOut.putText('Available PIDS: ' + _scheduler.getAvailablePIDS());
         };
         Shell.prototype.shellSetSchedule = function (args){
             if (args.length < 1 || args.length > 1){

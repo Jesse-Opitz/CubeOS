@@ -118,7 +118,7 @@ var TSOS;
                 
                 _hdd.zeroBlock(originT, originS, originB);
                 
-                while(nextChain[0] !== 0 && nextChain[1] !== 0 && nextChain[2] !== 0) { // nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
+                while(!(nextChain[0] === 0 && nextChain[1] === 0 && nextChain[2] === 0)) { // nextChain[0] !== "00" || nextChain[0] !== "00" || nextChain[0] !== "00"){
                     var t = nextChain[0];
                     var s = nextChain[1];
                     var b = nextChain[2];
@@ -129,7 +129,7 @@ var TSOS;
                     //console.log("Deleting: " + parseInt(t) + ":" + parseInt(s) + ":" + parseInt(b));
                 }
                 _hdd.updateHDDTable();
-                //console.log(file_name + " successfully deleted!");
+                console.log(file_name + " successfully deleted!");
                 _Kernel.krnTrace(file_name + " successfully deleted!");
             } else{
                 _Kernel.krnTrace(file_name + " not successfully deleted!");
@@ -203,7 +203,7 @@ var TSOS;
                 }
             }
             
-            console.log("Done Reading.");
+            console.log("Reading file " + file_name + " successful.");
             _Kernel.krnTrace("Reading file " + file_name + " successful.");
             return contents;
         };
@@ -271,7 +271,6 @@ var TSOS;
                     nextChainBit = _hdd.getChainBit(t, s, b)
                     
                     if (nextChainBit[0] === 0 && nextChainBit[1] === 0 && nextChainBit[2] === 0){ //(nextChainBit[0] !== "00" && nextChainBit[1] !== "00" && nextChainBit[2] !== "00"){ // If there is no chain bit, but still data
-                        console.log("HERE");
                         // ZFOD
                         _hdd.zeroBlock(t, s, b) 
                         
@@ -300,7 +299,8 @@ var TSOS;
                     } else {
                         // Get next block
                         newChainBit = _hdd.getChainBit(t, s, b);
-                        console.log("New chainBit " + newChainBit);
+                        //console.log("New chainBit " + newChainBit);
+                        
                         // ZFOD
                         _hdd.zeroBlock(t, s, b) 
                         
