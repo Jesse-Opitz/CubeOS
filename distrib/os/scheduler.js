@@ -86,25 +86,29 @@ var TSOS;
             // _PCB is the last used process
             var base = _PCB.base;
             var limit = _PCB.limit;
+            var seg = _PCB.segment;
             var lastUsedPID = _PCB.PID;
             for (var i = 0; i < _residentQueue.getSize();i++) {
                 if(_residentQueue.q[i].PID === pid) {
-                    _PCB = _residentQueue.q[i].PID;
+                    _PCB = _residentQueue.q[i];
                     _PCB.base = base;
                     _PCB.limit = limit;
+                    _PCB.segment = seg;
                     _PCB.loc = 'Memory';
                     document.getElementById("loc" + pid).innerHTML = 'Memory';
                 }
             }
             
             _MemoryManager.write(newData);
+            
+            _krnfsDDDriver.krnfsDDDeleteFile(_PCB.PID);
         };
         
         Scheduler.prototype.rollOut = function(pid){
             // Roll out must go before roll in
             // Rolls program out to HDD
             _krnfsDDDriver.krnfsDDCreateFile(pid);
-            console.log("Here created");
+            
             for (var i = 0; i < _residentQueue.getSize();i++) {
                 if(_residentQueue.q[i].PID === pid) {
                     _residentQueue.q[i].loc = 'HDD';
@@ -116,7 +120,7 @@ var TSOS;
             for (var j = _PCB.base; j < _PCB.limit; j++){
                 oldData += _Memory.bytes[j].toString();
             }
-            
+            console.log("Old: " + oldData);
             _krnfsDDDriver.krnfsDDEditFile(_PCB.PID, oldData);
         };
         

@@ -54,8 +54,8 @@ var TSOS;
                 _Memory.bytes[i] = groupedCodes.split(' ')[i-base];
             }
             
-            console.log('Bytes in main memory: ' + _Memory.bytes);
-            console.log('Length of bytes in main memory: ' + _Memory.bytes.length);
+            //console.log('Bytes in main memory: ' + _Memory.bytes);
+            //console.log('Length of bytes in main memory: ' + _Memory.bytes.length);
             
             // _MemoryManager.updateMemTable(_Memory.bytes); - old call
             this.updateMemTable(_Memory.bytes);

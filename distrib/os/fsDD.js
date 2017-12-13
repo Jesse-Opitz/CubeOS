@@ -73,12 +73,13 @@ var TSOS;
                 _StdOut.putText("Your directory cube is full.");
                 return false;
             }
-            
+            file_name = file_name.toString();
+            console.log("Creating file " + file_name.length);
             _hdd.flipUseBit(t, s, b);
             data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
 
             if (file_name.length <= _fileNameSize){
-                _Kernel.krnTrace("Creating file " + file_name + ".");
+                _Kernel.krnTrace("Creating file " + file_name);
                 
                 for (var i = 0; i < file_name.length; i++){
                     charCode = file_name.charCodeAt(i);
@@ -106,6 +107,8 @@ var TSOS;
             // Deletes a file on disk
             _Kernel.krnTrace("Deleting file " + file_name);
             console.log("Deleting file: " + file_name);
+            file_name = file_name.toString();
+            
             //console.log("Deleting file " + file_name);
             var originTSB = _hdd.findFile(file_name);
             //console.log("Origin TSB: " + originTSB);
@@ -141,6 +144,7 @@ var TSOS;
             // @returns contents of the file
             _Kernel.krnTrace("Reading file " + file_name);
             console.log("Reading file: " + file_name);
+            file_name = file_name.toString();
             
             var contents = '';
             var data;
@@ -175,14 +179,15 @@ var TSOS;
                 while(!(t === 0 && s === 0 && b === 0)){
                     //console.log("here " + t + ":" + s + ":" + b)
                     data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
-                    for (i = 1; i < _fileNameSize; i++){
-                        if(data[i] === "00"){
-                            break;
-                        } else {
-                            //console.log("Data: " + data[i]);
-                            charCode = parseInt(data[i], 16)
-                            contents += String.fromCharCode(charCode);
-                        }
+                    for (i = 0; i <= _fileNameSize; i++){
+                        //if(data[i] === "00"){ // If you see a break in the middle of a file stop.
+                        //    break;
+                        //} else {
+                            //TODO: Change this back
+                            //charCode = parseInt(data[i], 16)
+                            //contents += String.fromCharCode(charCode);
+                        contents += data[i]
+                        //}
                     }
                     chainTSB = _hdd.getChainBit(t, s, b);
                 
@@ -205,12 +210,14 @@ var TSOS;
             
             console.log("Reading file " + file_name + " successful.");
             _Kernel.krnTrace("Reading file " + file_name + " successful.");
-            return contents;
+            console.log("Contents: " + contents.substr(2));
+            return contents.substring(2);
         };
         fsDD.prototype.krnfsDDEditFile = function (file_name, data) {
             // Edits a file on the disk
             _Kernel.krnTrace("Editing file " + file_name);
             console.log("Editing file: " + file_name);
+            file_name = file_name.toString();
 
             // Retrieves TSB of directory
             var originTSB = _hdd.findFile(file_name);
@@ -252,7 +259,8 @@ var TSOS;
                     hexCode = charCode.toString(16).toUpperCase();
                     
                     //write data to the new block
-                    newBlock[i+1] = hexCode;
+                    // TODO: Change this back
+                    newBlock[i+1] = data[0]; //hexCode;
                     
                     // Delete char from data
                     //console.log(data[0]);
