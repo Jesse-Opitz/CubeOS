@@ -185,10 +185,9 @@ var TSOS;
                         //if(data[i] === "00"){ // If you see a break in the middle of a file stop.
                         //    break;
                         //} else {
-                            //TODO: Change this back
-                            //charCode = parseInt(data[i], 16)
-                            //contents += String.fromCharCode(charCode);
-                        contents += data[i]
+                        charCode = parseInt(data[i], 16)
+                        contents += String.fromCharCode(charCode);
+                        //contents += data[i]
                         //}
                     }
                     chainTSB = _hdd.getChainBit(t, s, b);
@@ -213,7 +212,7 @@ var TSOS;
             console.log("Reading file " + file_name + " successful.");
             _Kernel.krnTrace("Reading file " + file_name + " successful.");
             console.log("Contents: " + contents.substr(2));
-            return contents.substring(2);
+            return contents;
         };
         fsDD.prototype.krnfsDDEditFile = function (file_name, data) {
             // Edits a file on the disk
@@ -262,7 +261,7 @@ var TSOS;
                     
                     //write data to the new block
                     // TODO: Change this back
-                    newBlock[i+1] = data[0]; //hexCode;
+                    newBlock[i+1] = hexCode;
                     
                     // Delete char from data
                     //console.log(data[0]);
