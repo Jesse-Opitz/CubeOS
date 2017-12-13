@@ -33,13 +33,13 @@ var TSOS;
                 if (_residentQueue.q[i].PID == pid){
                     //var indexOfResQ = i;
                     _MemoryManager.removeResQRow(pid);
-                    console.log("Killing resident queue pid: " + _residentQueue.q[i]);
+                    console.log("Killing resident queue pid: " + _residentQueue.q[i].PID);
                     _residentQueue.q.splice(i, 1);
                 }
             }
             
             console.log('Ready Queue: ' + _readyQueue.q.toString());
-            console.log('Resident Queue: ' + _residentQueue.q.toString());
+            console.log('Resident Queue: ' + _resQTable);
             _PCB.IR = '00';
             _CPU.IR = '00';
             
@@ -81,47 +81,63 @@ var TSOS;
         };
         Scheduler.prototype.rollIn = function (pid) {
             // Rolls a program into memory
+            console.log("Here: Rolling in " + pid);
             var newData = _krnfsDDDriver.krnfsDDReadFile(pid);
-            
+            console.log("New: " + newData);
             // _PCB is the last used process
             var base = _PCB.base;
             var limit = _PCB.limit;
             var seg = _PCB.segment;
             var lastUsedPID = _PCB.PID;
+            //console.log(_PCB);
+            console.log(_PCB.PID + "bls" + _PCB.base + ":" + limit + ":" + seg);
             for (var i = 0; i < _residentQueue.getSize();i++) {
-                if(_residentQueue.q[i].PID === pid) {
+                console.log(i);
+                if(_residentQueue.q[i].PID === parseInt(pid)) {
+                    console.log("PID: " + pid);
                     _PCB = _residentQueue.q[i];
                     _PCB.base = base;
                     _PCB.limit = limit;
                     _PCB.segment = seg;
                     _PCB.loc = 'Memory';
+                    _PCB.program_counter = 0;
                     document.getElementById("loc" + pid).innerHTML = 'Memory';
                 }
             }
-            
+            console.log(_PCB);
+            _krnfsDDDriver.krnfsDDDeleteFile(_PCB.PID);
+            console.log(newData);
             _MemoryManager.write(newData);
             
-            _krnfsDDDriver.krnfsDDDeleteFile(_PCB.PID);
+            _MemoryManager.updateMemTable();
+            _MemoryManager.alterResQRows();
+            _hdd.updateHDDTable();
         };
         
         Scheduler.prototype.rollOut = function(pid){
             // Roll out must go before roll in
-            // Rolls program out to HDD
+            // Rolls program out of memory into HDD
+            console.log("Here: Rolling out " + pid);
+            
             _krnfsDDDriver.krnfsDDCreateFile(pid);
             
             for (var i = 0; i < _residentQueue.getSize();i++) {
                 if(_residentQueue.q[i].PID === pid) {
-                    _residentQueue.q[i].loc = 'HDD';
-                    document.getElementById("loc" + pid).innerHTML = 'HDD';
+                    _PCB = _residentQueue.q[i];
                 }
             }
-            
             var oldData = '';
             for (var j = _PCB.base; j < _PCB.limit; j++){
                 oldData += _Memory.bytes[j].toString();
             }
-            console.log("Old: " + oldData);
-            _krnfsDDDriver.krnfsDDEditFile(_PCB.PID, oldData);
+            
+            //console.log("Old: " + oldData);
+            
+            _krnfsDDDriver.krnfsDDEditFile(pid, oldData);
+            
+            _MemoryManager.updateMemTable();
+            _MemoryManager.alterResQRows();
+            _hdd.updateHDDTable();
         };
         
         Scheduler.prototype.contextSwitch = function (){
@@ -209,7 +225,7 @@ var TSOS;
                 document.getElementById("act" + _PCB.PID).innerHTML = 'Ready';
                 this.quantum = _quantum;
                 if (_isRun){
-                    console.log('isRun is '  + _isRun);
+                    //console.log('isRun is '  + _isRun);
                     if (_PCB.IR == '00'){
                         _isRun = false;
                         _CPU.isExecuting = false;

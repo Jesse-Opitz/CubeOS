@@ -35,7 +35,7 @@ var TSOS;
             _Memory.clearMem(base, limit);
             
             console.log("Writing to segment " + segment);
-            console.log("Base is: " + base);
+            //console.log("Base is: " + base);
             //this.updateMemTable(opCodes); - old call
             
             // Removes any spaces from opcodes
@@ -108,7 +108,16 @@ var TSOS;
             
             return [base, limit];
         };
-        
+        MemoryManager.prototype.alterResQRows = function () {
+            // TODO: Change name
+            // Updates table
+            for (var i = 0; i < _residentQueue.getSize(); i++){
+                
+                document.getElementById("pid" + _residentQueue.q[i].PID).innerHTML = _readyQueue.q[i].PID;
+                document.getElementById("act" + _residentQueue.q[i].PID).innerHTML = _residentQueue.q[i].active;
+                document.getElementById("loc" + _residentQueue.q[i].PID).innerHTML = _residentQueue.q[i].loc;
+            }
+        }
         // clearResQTable
         MemoryManager.prototype.removeResQRow = function(pid){
             // remove row "rqPID:" +_residentQueue.q[i].PID
@@ -117,6 +126,8 @@ var TSOS;
         };
         
         MemoryManager.prototype.updateResQRows = function (){
+            //TODO: Change name
+            // Creates new rows
             var tblBody = document.getElementById("rqTble");
             
             // creating all cells

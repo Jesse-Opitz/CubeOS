@@ -35,7 +35,11 @@ var TSOS;
             this.limit = limit;
             this.active = active; // I realize this should be status, after it's working
             // |-> TODO: Changing this should prob be a PCB function...I will handle that at some point
-            this.segment = segment;
+            if (loc === 'Memory'){
+                this.segment = segment;
+            } else {
+                this.segment = undefined;
+            }
             this.loc = loc;
             
             /*

@@ -64,6 +64,7 @@ var TSOS;
         
         fsDD.prototype.krnfsDDCreateFile = function (file_name) {
             // Creates a file on disk
+            console.log("FILENAME: " + file_name);
             var tsb = _hdd.getAvailableDirSpace();
             if (tsb != false){
                 var t = tsb[0];
@@ -74,7 +75,7 @@ var TSOS;
                 return false;
             }
             file_name = file_name.toString();
-            console.log("Creating file " + file_name.length);
+            console.log("Creating file " + file_name.toString());
             _hdd.flipUseBit(t, s, b);
             data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
 
@@ -96,6 +97,7 @@ var TSOS;
                 //console.log("New Data in " + t + ":" + s + ":" + b + ": " + sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
                 
                 _hdd.updateHDDTable();
+                console.log("File " + file_name + " created.");
                 _Kernel.krnTrace("File " + file_name + " created.");
             } else{
                 _StdOut.putText("File name to long! Max length is " + _fileNameSize + " characters.");
@@ -179,7 +181,7 @@ var TSOS;
                 while(!(t === 0 && s === 0 && b === 0)){
                     //console.log("here " + t + ":" + s + ":" + b)
                     data = JSON.parse(sessionStorage.getItem("TSB:" + t + ":" + s + ":" + b));
-                    for (i = 0; i <= _fileNameSize; i++){
+                    for (i = 1; i <= _fileNameSize; i++){
                         //if(data[i] === "00"){ // If you see a break in the middle of a file stop.
                         //    break;
                         //} else {

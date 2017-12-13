@@ -512,14 +512,14 @@ var TSOS;
                                     //console.log("Before: " + newloc);
                                     //newloc++;
                                     //console.log("Added 1 to newloc: " + newloc);
-                                    console.log("newloc: " + newloc);
+                                    //console.log("newloc: " + newloc);
                                 }
                                 _PCB.program_counter = newloc + 1;
                             } else{
                                 //console.log("nah here");
                                 _PCB.program_counter = newloc - limit;
                             }
-                            console.log("Program counter: " + _PCB.program_counter);
+                            //console.log("Program counter: " + _PCB.program_counter);
                             
                         } else{
                             _PCB.program_counter += 1;
@@ -650,7 +650,7 @@ var TSOS;
                 }
                 
             }
-            _MemoryManager.updateResQRows();
+            _MemoryManager.alterResQRows();
             _PCB.updatePCBTable();
             _CPU.updateCPUTable();
         };

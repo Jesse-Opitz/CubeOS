@@ -433,8 +433,8 @@ var TSOS;
             }
             
             // See if PID is in Ready queue
-            for (var i = 0; i < _residentQueue.getSize(); i++){
-                if (args[0] == _residentQueue.q[i].PID){
+            for (var i = 0; i < _readyQueue.getSize(); i++){
+                if (args[0] == _readyQueue.q[i]){
                     found1 = true;
                     // Store the running PID
                     var activePID = i;
@@ -455,16 +455,28 @@ var TSOS;
                             found2 = true;
                         }
                     }
-                    if(found2){ //TODO: I think there is an issue here somewhere
+                    
+                    _isRun = true;
+                    console.log('isRun set to ' + _isRun);
+                    
+                    console.log("HERE: " + _residentQueue.q[resQIndex].loc);
+                    
+                    if(_residentQueue.q[resQIndex].loc === 'HDD'){
+                        //console.log('Here: ' + _readyQueue);
+                        //console.log('PID: ' + _readyQueue.q[0]);
+                        _scheduler.rollOut(_readyQueue.q[0]);
+                        _scheduler.rollIn(args[0]);
+                        _hdd.updateHDDTable();
+                    } else {
+                        if(found2){ //TODO: I think there is an issue here somewhere
                         // Segment of memory
                         _PCB = _residentQueue.q[resQIndex];
                         _PCB.updatePCBTable();
+                        }
+                        else{
+                            console.log('PCB not found in resident queue.');
+                        }
                     }
-                    else{
-                        console.log('PCB not found in resident queue.');
-                    }
-                    _isRun = true;
-                    console.log('isRun set to ' + _isRun);
                     _CPU.cycle();
                     
                     // TODO: After a program finishes, erase it from the ready queue 
