@@ -32,11 +32,18 @@ var TSOS;
             for (var i = 0; i < _residentQueue.getSize(); i++){
                 if (_residentQueue.q[i].PID == pid){
                     //var indexOfResQ = i;
-                    _MemoryManager.removeResQRow(pid);
                     console.log("Killing resident queue pid: " + _residentQueue.q[i].PID);
                     _residentQueue.q.splice(i, 1);
                 }
             }
+            for (var i = 0; i < _resQTable.length; i++){
+                if (_resQTable[i] == pid){
+                    _resQTable.splice(i, 1);
+                }
+            }
+            
+            _MemoryManager.removeResQRow(pid);
+            _MemoryManager.alterResQRows();
             
             console.log('Ready Queue: ' + _readyQueue.q.toString());
             console.log('Resident Queue: ' + _resQTable);
@@ -45,6 +52,11 @@ var TSOS;
             
             if (_isRun){
                 _CPU.isExecuting = false;
+            }
+            if (_readyQueue.getSize() == 0){
+                _CPU.isExecuting = false;
+            } else{
+                _PCB = _residentQueue.q[0];
             }
         };
         /*Scheduler.prototype.getAvailablePIDS = function (){
@@ -222,7 +234,7 @@ var TSOS;
             // Check for single run or runall
             console.log("PID-:" + _PCB.PID + " Quantum: " + _progCounter);
             if ((_progCounter >= this.quantum || _PCB.IR == '00')){
-                document.getElementById("act" + _PCB.PID).innerHTML = 'Ready';
+                
                 this.quantum = _quantum;
                 if (_isRun){
                     //console.log('isRun is '  + _isRun);
@@ -236,6 +248,7 @@ var TSOS;
                 else{
                     console.log("PID: " + _PCB.PID);
                     console.log("Ready Queue: " + _readyQueue.q.toString())
+                    document.getElementById("act" + _PCB.PID).innerHTML = 'Ready';
                     this.contextSwitch();
                     _progCounter = 0;
                 }

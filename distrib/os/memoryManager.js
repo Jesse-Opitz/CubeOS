@@ -112,7 +112,7 @@ var TSOS;
             // TODO: Change name
             // Updates table
             for (var i = 0; i < _residentQueue.getSize(); i++){
-                
+                console.log("Updating table: " + _residentQueue.q[i]);
                 document.getElementById("pid" + _residentQueue.q[i].PID).innerHTML = _readyQueue.q[i].PID;
                 document.getElementById("act" + _residentQueue.q[i].PID).innerHTML = _residentQueue.q[i].active;
                 document.getElementById("loc" + _residentQueue.q[i].PID).innerHTML = _residentQueue.q[i].loc;

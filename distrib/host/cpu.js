@@ -268,7 +268,7 @@ var TSOS;
                             locNum = _Memory.bytes[loc];
                             
                             // Adds number from memory to accumulator
-                            added = parseInt(currAcc) + parseInt(locNum);
+                            added = parseInt(currAcc, 16) + parseInt(locNum, 16);
                             
                             if (added < 10){
                                 res = '0' + added;
@@ -598,8 +598,10 @@ var TSOS;
                         // Check X reg for 01
                         if ( _PCB.X == "01") {
                             // Print int stored in Y reg
-                            _StdOut.putText(_PCB.Y);
-                            _Console.advanceLine();
+                            var output = parseInt(_PCB.Y, 16);
+                            
+                            output = String(output);
+                            _StdOut.putText(output);
                         }
                         else if (_PCB.X == "02") {
                             // Print text until "00"
@@ -650,7 +652,7 @@ var TSOS;
                 }
                 
             }
-            _MemoryManager.alterResQRows();
+            //_MemoryManager.alterResQRows();
             _PCB.updatePCBTable();
             _CPU.updateCPUTable();
         };
